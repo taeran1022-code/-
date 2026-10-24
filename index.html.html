@@ -1015,20 +1015,36 @@
     const myUid = getCurrentUserUid();
     if (!myUid) return;
 
-    const friendData = {
-      id: 'fr_' + Date.now(),
-      user1: myUid,
-      user2: fromUid,
-      createdAt: Date.now()
-    };
+    // 이미 친구인지 검사 (중복 방지)
+    const alreadyFriends = state.friends.some(f => 
+      (f.user1 === myUid && f.user2 === fromUid) || (f.user2 === myUid && f.user1 === fromUid)
+    );
 
-    if (useOnlineFirebase && db) {
-      await addDoc(getPublicColl('friends'), friendData);
-      deleteDoc(getPublicDoc('friendRequests', reqId)).catch(e => console.warn(e));
-    } else {
-      state.friends.push(friendData);
-      state.friendRequests = state.friendRequests.filter(r => r.id !== reqId);
+    if (!alreadyFriends) {
+      const friendData = {
+        id: 'fr_' + Date.now(),
+        user1: myUid,
+        user2: fromUid,
+        createdAt: Date.now()
+      };
+
+      if (useOnlineFirebase && db) {
+        await addDoc(getPublicColl('friends'), friendData);
+      } else {
+        state.friends.push(friendData);
+      }
     }
+
+    // 서버 및 로컬 상태에서 신청 내역 확실히 삭제
+    if (useOnlineFirebase && db) {
+      try {
+        await deleteDoc(getPublicDoc('friendRequests', reqId));
+      } catch (e) {
+        console.warn('신청 삭제 실패:', e);
+      }
+    }
+    
+    state.friendRequests = state.friendRequests.filter(r => r.id !== reqId);
 
     say('친구 신청을 승인했습니다!');
     renderFriendsAndChatHub();
@@ -1037,9 +1053,8 @@
   async function rejectFriendRequest(reqId) {
     if (useOnlineFirebase && db) {
       deleteDoc(getPublicDoc('friendRequests', reqId)).catch(e => console.warn(e));
-    } else {
-      state.friendRequests = state.friendRequests.filter(r => r.id !== reqId);
     }
+    state.friendRequests = state.friendRequests.filter(r => r.id !== reqId);
     say('친구 신청을 거절했습니다.');
     renderFriendsAndChatHub();
   }
@@ -1081,7 +1096,9 @@
 
     if (state.chatHubTab === 'friends') {
       const myFriends = state.friends.filter(f => f.user1 === myUid || f.user2 === myUid);
-      const friendUids = myFriends.map(f => f.user1 === myUid ? f.user2 : f.user1);
+      
+      // 친구 UID 중복 제거
+      const friendUids = Array.from(new Set(myFriends.map(f => f.user1 === myUid ? f.user2 : f.user1)));
 
       let displayList = friendUids;
       const query = state.friendSearchQuery.trim().toLowerCase();
@@ -1157,7 +1174,7 @@
 
     if (state.chatHubTab === 'friends') {
       const myFriends = state.friends.filter(f => f.user1 === myUid || f.user2 === myUid);
-      const friendUids = myFriends.map(f => f.user1 === myUid ? f.user2 : f.user1);
+      const friendUids = Array.from(new Set(myFriends.map(f => f.user1 === myUid ? f.user2 : f.user1)));
 
       let displayList = friendUids;
       const query = state.friendSearchQuery.trim().toLowerCase();
@@ -1583,7 +1600,7 @@
       } else {
         previewImg.src = avatarFor(nameVal, state.selectedColor);
         if (desc) desc.textContent = '선택한 색상의 기본 아바타로 설정됩니다.';
-        if (removeBtn) removeBtn.add('hidden');
+        if (removeBtn) removeBtn.classList.add('hidden');
       }
     }
   }
