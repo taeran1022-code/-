@@ -96,16 +96,6 @@
     .board-btn:hover:not([aria-current="true"]) { background: var(--surface-2); }
   }
 
-  /* Left Sidebar Chat & Friends Section */
-  .sidebar-chat-box {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-
   /* Guide and banners */
   .guide { border: 1px dashed var(--line); border-radius: 10px; padding: 14px 16px; }
   .guide h2 { margin: 0 0 6px; font: 400 17px/1.3 var(--font-display); }
@@ -166,34 +156,11 @@
   .cmt .av { width: 24px; height: 24px; border-radius: 50%; }
   .cmt .meta { font-size: 13px; color: var(--muted); }
   .cmt .meta b { color: var(--fg); font-weight: 500; margin-right: 6px; }
-
-  .skel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
-  .skel i { display: block; height: 12px; border-radius: 6px; background: var(--surface-2); animation: pulse 1.4s ease-in-out infinite; }
-  .skel i:nth-child(1) { width: 18%; }
-  .skel i:nth-child(2) { width: 62%; height: 16px; }
-  .skel i:nth-child(3) { width: 92%; }
-  @keyframes pulse { 50% { opacity: 0.45; } }
-
-  /* Chat & Friends Floating Widget */
-  .chat-widget-btn {
-    position: fixed; bottom: 24px; right: 24px; z-index: 40;
-    background: var(--accent); color: var(--accent-fg);
-    border-radius: 999px; padding: 12px 18px;
-    display: flex; align-items: center; gap: 8px;
-    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
-    font-weight: 700; transition: transform 0.2s;
-  }
-  .chat-widget-btn:hover { transform: scale(1.05); }
-  .badge-count {
-    background: #FF3B30; color: white; border-radius: 999px;
-    font-size: 11px; padding: 2px 7px; font-weight: 800;
-  }
 </style>
 </head>
 <body>
 
 <div class="shell">
-  <!-- Header with Brand & Auth Status -->
   <header class="top">
     <div class="brand flex items-center gap-3">
       <h1>APBLM</h1>
@@ -202,51 +169,19 @@
   </header>
 
   <div class="layout">
-    <!-- Left Navigation & Messenger Sidebar -->
     <aside class="sidebar-container">
-      <!-- 게시판 카테고리 -->
       <div>
         <h3 class="font-display text-sm text-[var(--muted)] mb-2 px-1 hidden md:block">카테고리</h3>
         <ul class="boards" id="boards" aria-label="게시판"></ul>
       </div>
-
-      <!-- Left Sidebar Friends & Chat Panel -->
-      <div id="sidebar-friends-chat" class="sidebar-chat-box shadow-sm hidden md:flex flex-col">
-        <div class="p-3 border-b border-[var(--line)] bg-[var(--surface-2)] flex items-center justify-between">
-          <h3 class="font-display text-base flex items-center gap-1.5">
-            <span>💬</span> 친구 & 메신저
-          </h3>
-          <span id="left-req-count-badge" class="badge-count hidden">0</span>
-        </div>
-
-        <!-- Sidebar Tabs -->
-        <div class="flex border-b border-[var(--line)] text-xs font-bold text-center bg-[var(--surface)]">
-          <button type="button" id="side-tab-friends" class="flex-1 py-2 border-b-2 border-[var(--accent)] text-[var(--accent)]">친구</button>
-          <button type="button" id="side-tab-requests" class="flex-1 py-2 border-b-2 border-transparent text-[var(--muted)] relative">
-            신청 <span id="side-req-badge" class="text-[9px] bg-red-500 text-white rounded-full px-1 ml-0.5 hidden">0</span>
-          </button>
-        </div>
-
-        <!-- Search Input -->
-        <div class="p-2 border-b border-[var(--line)]">
-          <input id="side-friend-search" type="search" class="field text-xs py-1" placeholder="친구 닉네임 검색">
-        </div>
-
-        <!-- Friend / Requests List -->
-        <div id="side-chat-list" class="max-h-[220px] overflow-y-auto divide-y divide-[var(--line)] text-xs">
-          <!-- Dynamic Content -->
-        </div>
-      </div>
     </aside>
 
     <main>
-      <!-- Announcement Banner -->
       <div class="announce" role="note">
         <span class="a-badge">공지</span>
         <p>환영합니다! 여기는 커뮤니티 겸 스크립트, 툴 등등 판매할 수 있는 상점입니다. 서로 정보 공유하고 이야기하는 시간을 가져보세요*^^*</p>
       </div>
 
-      <!-- User Guide -->
       <section class="guide" aria-labelledby="guide-h">
         <h2 id="guide-h">이용 안내</h2>
         <ul>
@@ -256,13 +191,10 @@
         </ul>
       </section>
 
-      <!-- System Notice Banner -->
       <div class="notice" id="notice" role="status" hidden></div>
 
-      <!-- Post Composer -->
       <section class="composer" id="composer" aria-label="새 글 쓰기"></section>
 
-      <!-- Toolbar -->
       <div class="toolbar">
         <div class="search">
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -274,71 +206,8 @@
         </div>
       </div>
 
-      <!-- Feed Container -->
       <div id="feed" aria-live="polite"></div>
     </main>
-  </div>
-</div>
-
-<!-- Floating Friends & Chat Launcher Button (Mobile only) -->
-<button id="floating-chat-btn" class="chat-widget-btn md:hidden hidden" type="button">
-  <span>💬</span>
-  <span>친구 & 채팅</span>
-  <span id="unread-total-badge" class="badge-count hidden">0</span>
-</button>
-
-<!-- Friends & Chat Hub Modal -->
-<div id="friends-chat-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-  <div class="bg-[var(--surface)] border border-[var(--line)] w-full max-w-2xl h-[85vh] max-h-[680px] rounded-2xl flex flex-col shadow-2xl relative overflow-hidden">
-    <!-- Header -->
-    <div class="p-4 border-b border-[var(--line)] flex items-center justify-between bg-[var(--surface-2)]">
-      <div class="flex items-center gap-2">
-        <h3 class="font-display text-xl">친구 & 메신저</h3>
-      </div>
-      <button type="button" id="chat-hub-close" class="text-[var(--muted)] hover:text-[var(--fg)] p-1 text-lg">✕</button>
-    </div>
-
-    <!-- Main Container -->
-    <div class="flex-1 flex overflow-hidden">
-      <!-- Friends / Active Chats List Sidebar -->
-      <div class="w-1/3 min-w-[200px] border-r border-[var(--line)] flex flex-col bg-[var(--surface)]">
-        <!-- Tabs -->
-        <div class="flex border-b border-[var(--line)] text-xs font-bold text-center">
-          <button type="button" id="tab-friends-btn" class="flex-1 py-2.5 border-b-2 border-[var(--accent)] text-[var(--accent)]">친구 목록</button>
-          <button type="button" id="tab-requests-btn" class="flex-1 py-2.5 border-b-2 border-transparent text-[var(--muted)] relative">
-            신청 <span id="req-count-badge" class="text-[10px] bg-red-500 text-white rounded-full px-1.5 py-0.5 ml-0.5 hidden">0</span>
-          </button>
-        </div>
-
-        <!-- Add Friend Search Input -->
-        <div id="friend-search-box" class="p-2 border-b border-[var(--line)]">
-          <input id="friend-search-input" type="search" class="field text-xs py-1.5" placeholder="닉네임/이메일로 친구검색">
-        </div>
-
-        <!-- Scrollable List -->
-        <div id="chat-sidebar-list" class="flex-1 overflow-y-auto divide-y divide-[var(--line)]"></div>
-      </div>
-
-      <!-- Active Chat Window -->
-      <div class="flex-1 flex flex-col bg-[var(--bg)]">
-        <div id="chat-partner-header" class="p-3 border-b border-[var(--line)] bg-[var(--surface)] flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="text-xs text-[var(--muted)]">대화 상대를 선택해주세요</span>
-          </div>
-        </div>
-
-        <div id="chat-messages-box" class="flex-1 p-4 overflow-y-auto space-y-3 flex flex-col">
-          <div class="text-center text-xs text-[var(--muted)] my-auto">
-            👈 왼쪽 목록에서 친구를 선택하여 채팅을 시작해보세요!
-          </div>
-        </div>
-
-        <form id="chat-send-form" class="p-2.5 border-t border-[var(--line)] bg-[var(--surface)] flex gap-2 hidden">
-          <input id="chat-input-field" type="text" class="field text-sm flex-1" placeholder="메시지를 입력하세요..." autocomplete="off">
-          <button type="submit" class="btn text-xs px-4">전송</button>
-        </form>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -374,14 +243,6 @@
       <span id="auth-toggle-text">계정이 없으신가요?</span>
       <button type="button" id="auth-toggle-btn" class="text-[var(--accent)] font-bold hover:underline">회원가입</button>
     </div>
-  </div>
-</div>
-
-<!-- Image Lightbox Modal -->
-<div id="image-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden cursor-pointer">
-  <div class="relative max-w-4xl max-h-[90vh] flex flex-col items-center justify-center">
-    <img id="image-modal-img" class="max-w-full max-h-[85vh] rounded-lg shadow-2xl object-contain" src="" alt="확대 이미지">
-    <p class="text-white/70 text-xs mt-2 font-medium">화면을 클릭하면 닫힙니다</p>
   </div>
 </div>
 
@@ -441,13 +302,15 @@
 
   const appId = typeof __app_id !== 'undefined' ? __app_id : 'apblm-community';
   
+  // 사용자님이 제공해주신 실제 Firebase 설정값 적용
   const fallbackConfig = {
-    apiKey: "AIzaSyDemoKeyForAPBLMCommunity12345",
-    authDomain: "apblm-community.firebaseapp.com",
-    projectId: "apblm-community",
-    storageBucket: "apblm-community.appspot.com",
-    messagingSenderId: "123456789",
-    appId: "1:123456789:web:abcdef123456"
+    apiKey: "AIzaSyD2nqYYsS4YXgBbGo1LZc3-tDSwpU7vwhQ",
+    authDomain: "ssss-ff011.firebaseapp.com",
+    projectId: "ssss-ff011",
+    storageBucket: "ssss-ff011.firebasestorage.app",
+    messagingSenderId: "424527694612",
+    appId: "1:424527694612:web:b6ed843f5741ce05421001",
+    measurementId: "G-8F0C5J3MLK"
   };
 
   const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : fallbackConfig;
@@ -522,9 +385,9 @@
     posts: getLocalData('apblm_posts', []), 
     comments: getLocalData('apblm_comments', []), 
     likes: getLocalData('apblm_likes', []),
-    friends: getLocalData('apblm_friends', []),
-    friendRequests: getLocalData('apblm_friend_requests', []),
-    messages: getLocalData('apblm_messages', []),
+    friends: [],
+    friendRequests: [],
+    messages: [],
     activeChatPartnerId: null,
     chatHubTab: 'friends',
     friendSearchQuery: '',
@@ -545,9 +408,6 @@
     setLocalData('apblm_posts', state.posts);
     setLocalData('apblm_comments', state.comments);
     setLocalData('apblm_likes', state.likes);
-    setLocalData('apblm_friends', state.friends);
-    setLocalData('apblm_friend_requests', state.friendRequests);
-    setLocalData('apblm_messages', state.messages);
     setLocalData('apblm_profile_map', state.profileMap);
   }
 
@@ -653,10 +513,6 @@
     say.t = setTimeout(() => { n.hidden = true; }, 5000);
   }
 
-  function skel() {
-    return h('div', { class: 'skel' }, h('i'), h('i'), h('i'));
-  }
-
   function openAuthModal(mode = 'login') {
     state.authMode = mode;
     const isSignup = mode === 'signup';
@@ -702,10 +558,8 @@
 
     const currentUid = getCurrentUserUid();
     const isLogged = !!state.customSessionUser;
-    const floatBtn = $('floating-chat-btn');
 
     if (isLogged && currentUid) {
-      if (floatBtn) floatBtn.classList.remove('hidden');
       const name = getCurrentUserName();
       const info = getUserInfo(currentUid, name);
 
@@ -736,7 +590,6 @@
         )
       );
     } else {
-      if (floatBtn) floatBtn.classList.add('hidden');
       bar.appendChild(
         h('div', { class: 'flex items-center gap-2' },
           h('button', {
@@ -1100,12 +953,23 @@
     if (sHot) sHot.setAttribute('aria-pressed', String(state.sort === 'hot'));
   }
 
+  // 프로필 모달 및 아바타 커스텀 로직
   function openProfileModal() {
     const uid = getCurrentUserUid();
     if (!uid) return;
+
     const currentInfo = getUserInfo(uid, getCurrentUserName());
+    const profileDoc = state.profileMap[uid] || {};
+
     const inputName = $('profile-name-input');
     if (inputName) inputName.value = currentInfo.name;
+
+    state.selectedColor = profileDoc.color || '#B3362A';
+    state.customAvatarDataUrl = profileDoc.avatarUrl && profileDoc.avatarUrl.startsWith('data:image/') ? profileDoc.avatarUrl : null;
+
+    updateProfilePreview();
+    renderColorPicker();
+
     const modal = $('profile-modal');
     if (modal) modal.classList.remove('hidden');
   }
@@ -1115,27 +979,116 @@
     if (modal) modal.classList.add('hidden');
   }
 
+  function updateProfilePreview() {
+    const nameInput = $('profile-name-input');
+    const nameVal = ((nameInput ? nameInput.value : '') || '회원').trim();
+    const previewImg = $('profile-preview-avatar');
+    const desc = $('avatar-mode-desc');
+    const removeBtn = $('remove-custom-photo');
+
+    if (previewImg) {
+      if (state.customAvatarDataUrl) {
+        previewImg.src = state.customAvatarDataUrl;
+        if (desc) desc.textContent = '직접 업로드한 사진으로 설정됩니다.';
+        if (removeBtn) removeBtn.classList.remove('hidden');
+      } else {
+        previewImg.src = avatarFor(nameVal, state.selectedColor);
+        if (desc) desc.textContent = '선택한 색상의 기본 아바타로 설정됩니다.';
+        if (removeBtn) removeBtn.classList.add('hidden');
+      }
+    }
+  }
+
+  function renderColorPicker() {
+    const group = $('color-picker-group');
+    if (!group) return;
+    group.innerHTML = '';
+
+    AVATAR_COLORS.forEach(col => {
+      const isSelected = !state.customAvatarDataUrl && state.selectedColor === col;
+      const btn = h('button', {
+        type: 'button',
+        class: `w-7 h-7 rounded-full transition-transform border-2 ${isSelected ? 'border-white ring-2 ring-[var(--accent)] scale-110' : 'border-transparent hover:scale-105'}`,
+        style: `background-color: ${col}`,
+        on: {
+          click: () => {
+            state.selectedColor = col;
+            state.customAvatarDataUrl = null;
+            updateProfilePreview();
+            renderColorPicker();
+          }
+        }
+      });
+      group.appendChild(btn);
+    });
+  }
+
   function initProfileForm() {
     const closeBtn = $('profile-modal-close');
     const cancelBtn = $('profile-cancel-btn');
+    const nameInput = $('profile-name-input');
+    const fileInput = $('profile-image-file');
+    const removePhotoBtn = $('remove-custom-photo');
     const form = $('profile-form');
+
     if (closeBtn) closeBtn.addEventListener('click', closeProfileModal);
     if (cancelBtn) cancelBtn.addEventListener('click', closeProfileModal);
+    if (nameInput) nameInput.addEventListener('input', updateProfilePreview);
+
+    if (fileInput) {
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (file.size > 2 * 1024 * 1024) {
+          say('프로필 사진 크기는 2MB 이하만 허용됩니다.');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          state.customAvatarDataUrl = evt.target.result;
+          updateProfilePreview();
+          renderColorPicker();
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    if (removePhotoBtn) {
+      removePhotoBtn.addEventListener('click', () => {
+        state.customAvatarDataUrl = null;
+        if (fileInput) fileInput.value = '';
+        updateProfilePreview();
+        renderColorPicker();
+      });
+    }
 
     if (form) {
       form.addEventListener('submit', (e) => {
         e.preventDefault();
-        const newName = $('profile-name-input').value.trim();
+        const newName = nameInput ? nameInput.value.trim() : '';
         const uid = getCurrentUserUid();
+
         if (!newName || !uid) return;
 
-        state.profileMap[uid] = { name: newName, color: state.selectedColor };
+        const finalAvatar = state.customAvatarDataUrl || avatarFor(newName, state.selectedColor);
+
+        state.profileMap[uid] = { 
+          name: newName, 
+          color: state.selectedColor, 
+          avatarUrl: finalAvatar 
+        };
+
         if (state.customSessionUser) {
           state.customSessionUser.displayName = newName;
+          state.customSessionUser.avatarUrl = finalAvatar;
+          state.customSessionUser.color = state.selectedColor;
           setSavedSession(state.customSessionUser);
         }
+
         syncStateToLocalStorage();
-        say('프로필이 수정되었습니다.');
+        say('프로필 정보가 변경되었습니다.');
         closeProfileModal();
         render();
       });
