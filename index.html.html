@@ -1,0 +1,1201 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>APBLM Community</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    --bg: #EDF1F2;
+    --surface: #FFFFFF;
+    --surface-2: #E3EAEC;
+    --fg: #15222A;
+    --muted: #566871;
+    --line: #D2DBDF;
+    --accent: #B3362A;
+    --accent-fg: #FFFFFF;
+    --accent-soft: #F7DAD5;
+    --accent-ink: #7A2319;
+    --heart: #D04A32;
+    --danger: #8C2A1C;
+    --font-display: "Do Hyeon", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    --font-body: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0F171B;
+      --surface: #172228;
+      --surface-2: #1F2D34;
+      --fg: #E6EEF1;
+      --muted: #93A5AD;
+      --line: #2A3A42;
+      --accent: #E88772;
+      --accent-fg: #2B0E09;
+      --accent-soft: #3C1D17;
+      --accent-ink: #F4B2A3;
+      --heart: #F2866F;
+      --danger: #F07A6C;
+      color-scheme: dark;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font: 15px/1.65 var(--font-body);
+    margin: 0;
+    padding: 0;
+  }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .shell {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding-block: 24px 56px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+
+  /* Header */
+  .top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; padding-bottom: 20px; }
+  .brand h1 { margin: 0; font: 400 clamp(30px, 6vw, 42px)/1.1 var(--font-display); letter-spacing: -0.01em; }
+
+  /* Layout */
+  .layout { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: start; }
+  @media (min-width: 780px) {
+    .layout { grid-template-columns: 280px minmax(0, 1fr); gap: 24px; }
+  }
+  main { min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+
+  /* Left Sidebar Navigation */
+  .sidebar-container { display: flex; flex-direction: column; gap: 16px; }
+  @media (min-width: 780px) {
+    .sidebar-container { position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow-y: auto; padding-right: 4px; }
+  }
+
+  /* Board list */
+  .boards { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin: 0; list-style: none; padding-left: 0; }
+  .boards li { flex: none; }
+  .board-btn {
+    display: flex; align-items: baseline; gap: 8px; width: 100%;
+    background: transparent; border: 1px solid var(--line); border-radius: 999px;
+    padding: 6px 14px; white-space: nowrap;
+  }
+  .board-btn .b-name { font: 400 17px/1.3 var(--font-display); }
+  .board-btn .b-count { margin-left: auto; color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .board-btn[aria-current="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+  .board-btn[aria-current="true"] .b-count { color: var(--accent-fg); }
+  @media (min-width: 780px) {
+    .boards { flex-direction: column; overflow: visible; gap: 2px; padding: 0; }
+    .board-btn { border: 0; border-radius: 8px; padding: 9px 12px; flex-wrap: wrap; }
+    .board-btn:hover:not([aria-current="true"]) { background: var(--surface-2); }
+  }
+
+  /* Left Sidebar Chat & Friends Section */
+  .sidebar-chat-box {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Guide and banners */
+  .guide { border: 1px dashed var(--line); border-radius: 10px; padding: 14px 16px; }
+  .guide h2 { margin: 0 0 6px; font: 400 17px/1.3 var(--font-display); }
+  .guide ul { margin: 0; padding-left: 18px; color: var(--muted); }
+  .announce { background: var(--accent); color: var(--accent-fg); border-radius: 10px; padding: 14px 16px; display: flex; gap: 10px; align-items: flex-start; }
+  .announce .a-badge { font: 400 13px/1.5 var(--font-display); letter-spacing: 0.02em; background: rgba(255,255,255,0.22); padding: 1px 10px; border-radius: 999px; flex: none; }
+  .announce p { margin: 0; line-height: 1.6; overflow-wrap: anywhere; }
+  .notice { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; font-size: 14px; }
+
+  /* Composer */
+  .composer { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .field {
+    width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
+    padding: 9px 12px; min-width: 0;
+  }
+  select.field { width: auto; }
+  .field::placeholder { color: var(--muted); }
+  textarea.field { resize: vertical; min-height: 96px; }
+  .btn {
+    border: 1px solid var(--accent); background: var(--accent); color: var(--accent-fg);
+    border-radius: 8px; padding: 8px 18px; font-weight: 700;
+  }
+  .btn-secondary {
+    border: 1px solid var(--line); background: var(--surface-2); color: var(--fg);
+    border-radius: 8px; padding: 8px 18px; font-weight: 500;
+  }
+  .btn-secondary:hover { background: var(--line); }
+
+  /* Toolbar */
+  .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .search { position: relative; flex: 1 1 200px; min-width: 0; }
+  .search svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+  .search input { padding-left: 36px; background: var(--surface); }
+  .seg { display: flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
+  .seg button { background: transparent; border: 0; padding: 7px 14px; font-size: 14px; color: var(--muted); }
+  .seg button[aria-pressed="true"] { background: var(--surface-2); color: var(--fg); font-weight: 700; }
+
+  /* Feed */
+  #feed { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .post { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px 10px; min-width: 0; }
+  .chip { font: 400 13px/1.5 var(--font-display); letter-spacing: 0.02em; background: var(--accent-soft); color: var(--accent-ink); padding: 1px 10px; border-radius: 999px; }
+  .post-title { margin: 8px 0 4px; font: 400 21px/1.35 var(--font-display); }
+  .title-btn { background: none; border: 0; padding: 0; text-align: left; font: inherit; overflow-wrap: anywhere; }
+  .title-btn:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .post-body { margin: 0 0 6px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .post-body.clamp { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .act {
+    display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 10px;
+    background: transparent; border: 0; border-radius: 8px; color: var(--muted); font-size: 14px;
+  }
+  .act:hover { background: var(--surface-2); color: var(--fg); }
+  .act.like[aria-pressed="true"] { color: var(--heart); }
+  .act.del.armed { color: var(--danger); font-weight: 700; }
+
+  .comments { border-top: 1px solid var(--line); margin-top: 6px; padding: 12px 0 10px; display: flex; flex-direction: column; gap: 12px; }
+  .clist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+  .cmt { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; gap: 4px 10px; align-items: start; }
+  .cmt .av { width: 24px; height: 24px; border-radius: 50%; }
+  .cmt .meta { font-size: 13px; color: var(--muted); }
+  .cmt .meta b { color: var(--fg); font-weight: 500; margin-right: 6px; }
+
+  .skel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+  .skel i { display: block; height: 12px; border-radius: 6px; background: var(--surface-2); animation: pulse 1.4s ease-in-out infinite; }
+  .skel i:nth-child(1) { width: 18%; }
+  .skel i:nth-child(2) { width: 62%; height: 16px; }
+  .skel i:nth-child(3) { width: 92%; }
+  @keyframes pulse { 50% { opacity: 0.45; } }
+
+  /* Chat & Friends Floating Widget */
+  .chat-widget-btn {
+    position: fixed; bottom: 24px; right: 24px; z-index: 40;
+    background: var(--accent); color: var(--accent-fg);
+    border-radius: 999px; padding: 12px 18px;
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+    font-weight: 700; transition: transform 0.2s;
+  }
+  .chat-widget-btn:hover { transform: scale(1.05); }
+  .badge-count {
+    background: #FF3B30; color: white; border-radius: 999px;
+    font-size: 11px; padding: 2px 7px; font-weight: 800;
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <!-- Header with Brand & Auth Status -->
+  <header class="top">
+    <div class="brand flex items-center gap-3">
+      <h1>APBLM</h1>
+    </div>
+    <div id="auth-bar" class="flex items-center gap-2"></div>
+  </header>
+
+  <div class="layout">
+    <!-- Left Navigation & Messenger Sidebar -->
+    <aside class="sidebar-container">
+      <!-- 게시판 카테고리 -->
+      <div>
+        <h3 class="font-display text-sm text-[var(--muted)] mb-2 px-1 hidden md:block">카테고리</h3>
+        <ul class="boards" id="boards" aria-label="게시판"></ul>
+      </div>
+
+      <!-- Left Sidebar Friends & Chat Panel -->
+      <div id="sidebar-friends-chat" class="sidebar-chat-box shadow-sm hidden md:flex flex-col">
+        <div class="p-3 border-b border-[var(--line)] bg-[var(--surface-2)] flex items-center justify-between">
+          <h3 class="font-display text-base flex items-center gap-1.5">
+            <span>💬</span> 친구 & 메신저
+          </h3>
+          <span id="left-req-count-badge" class="badge-count hidden">0</span>
+        </div>
+
+        <!-- Sidebar Tabs -->
+        <div class="flex border-b border-[var(--line)] text-xs font-bold text-center bg-[var(--surface)]">
+          <button type="button" id="side-tab-friends" class="flex-1 py-2 border-b-2 border-[var(--accent)] text-[var(--accent)]">친구</button>
+          <button type="button" id="side-tab-requests" class="flex-1 py-2 border-b-2 border-transparent text-[var(--muted)] relative">
+            신청 <span id="side-req-badge" class="text-[9px] bg-red-500 text-white rounded-full px-1 ml-0.5 hidden">0</span>
+          </button>
+        </div>
+
+        <!-- Search Input -->
+        <div class="p-2 border-b border-[var(--line)]">
+          <input id="side-friend-search" type="search" class="field text-xs py-1" placeholder="친구 닉네임 검색">
+        </div>
+
+        <!-- Friend / Requests List -->
+        <div id="side-chat-list" class="max-h-[220px] overflow-y-auto divide-y divide-[var(--line)] text-xs">
+          <!-- Dynamic Content -->
+        </div>
+      </div>
+    </aside>
+
+    <main>
+      <!-- Announcement Banner -->
+      <div class="announce" role="note">
+        <span class="a-badge">공지</span>
+        <p>환영합니다! 여기는 커뮤니티 겸 스크립트, 툴 등등 판매할 수 있는 상점입니다. 서로 정보 공유하고 이야기하는 시간을 가져보세요*^^*</p>
+      </div>
+
+      <!-- User Guide -->
+      <section class="guide" aria-labelledby="guide-h">
+        <h2 id="guide-h">이용 안내</h2>
+        <ul>
+          <li>비난과 욕설은 자제해주세요.</li>
+          <li>개인정보는 올리지 마세요.</li>
+          <li>이 사이트에서 일어난 일이나 사기 피해는 알아서 해결하세요.</li>
+        </ul>
+      </section>
+
+      <!-- System Notice Banner -->
+      <div class="notice" id="notice" role="status" hidden></div>
+
+      <!-- Post Composer -->
+      <section class="composer" id="composer" aria-label="새 글 쓰기"></section>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="search">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <input class="field" id="search" type="search" placeholder="제목, 내용, 작성자로 검색..." autocomplete="off">
+        </div>
+        <div class="seg" role="group" aria-label="정렬">
+          <button type="button" id="sort-new" aria-pressed="true">최신순</button>
+          <button type="button" id="sort-hot" aria-pressed="false">인기순</button>
+        </div>
+      </div>
+
+      <!-- Feed Container -->
+      <div id="feed" aria-live="polite"></div>
+    </main>
+  </div>
+</div>
+
+<!-- Floating Friends & Chat Launcher Button (Mobile only) -->
+<button id="floating-chat-btn" class="chat-widget-btn md:hidden hidden" type="button">
+  <span>💬</span>
+  <span>친구 & 채팅</span>
+  <span id="unread-total-badge" class="badge-count hidden">0</span>
+</button>
+
+<!-- Friends & Chat Hub Modal -->
+<div id="friends-chat-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+  <div class="bg-[var(--surface)] border border-[var(--line)] w-full max-w-2xl h-[85vh] max-h-[680px] rounded-2xl flex flex-col shadow-2xl relative overflow-hidden">
+    <!-- Header -->
+    <div class="p-4 border-b border-[var(--line)] flex items-center justify-between bg-[var(--surface-2)]">
+      <div class="flex items-center gap-2">
+        <h3 class="font-display text-xl">친구 & 메신저</h3>
+      </div>
+      <button type="button" id="chat-hub-close" class="text-[var(--muted)] hover:text-[var(--fg)] p-1 text-lg">✕</button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="flex-1 flex overflow-hidden">
+      <!-- Friends / Active Chats List Sidebar -->
+      <div class="w-1/3 min-w-[200px] border-r border-[var(--line)] flex flex-col bg-[var(--surface)]">
+        <!-- Tabs -->
+        <div class="flex border-b border-[var(--line)] text-xs font-bold text-center">
+          <button type="button" id="tab-friends-btn" class="flex-1 py-2.5 border-b-2 border-[var(--accent)] text-[var(--accent)]">친구 목록</button>
+          <button type="button" id="tab-requests-btn" class="flex-1 py-2.5 border-b-2 border-transparent text-[var(--muted)] relative">
+            신청 <span id="req-count-badge" class="text-[10px] bg-red-500 text-white rounded-full px-1.5 py-0.5 ml-0.5 hidden">0</span>
+          </button>
+        </div>
+
+        <!-- Add Friend Search Input -->
+        <div id="friend-search-box" class="p-2 border-b border-[var(--line)]">
+          <input id="friend-search-input" type="search" class="field text-xs py-1.5" placeholder="닉네임/이메일로 친구검색">
+        </div>
+
+        <!-- Scrollable List -->
+        <div id="chat-sidebar-list" class="flex-1 overflow-y-auto divide-y divide-[var(--line)]"></div>
+      </div>
+
+      <!-- Active Chat Window -->
+      <div class="flex-1 flex flex-col bg-[var(--bg)]">
+        <div id="chat-partner-header" class="p-3 border-b border-[var(--line)] bg-[var(--surface)] flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-[var(--muted)]">대화 상대를 선택해주세요</span>
+          </div>
+        </div>
+
+        <div id="chat-messages-box" class="flex-1 p-4 overflow-y-auto space-y-3 flex flex-col">
+          <div class="text-center text-xs text-[var(--muted)] my-auto">
+            👈 왼쪽 목록에서 친구를 선택하여 채팅을 시작해보세요!
+          </div>
+        </div>
+
+        <form id="chat-send-form" class="p-2.5 border-t border-[var(--line)] bg-[var(--surface)] flex gap-2 hidden">
+          <input id="chat-input-field" type="text" class="field text-sm flex-1" placeholder="메시지를 입력하세요..." autocomplete="off">
+          <button type="submit" class="btn text-xs px-4">전송</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Auth Modal (Login / Signup) -->
+<div id="auth-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+  <div class="bg-[var(--surface)] border border-[var(--line)] w-full max-w-sm rounded-2xl p-6 shadow-2xl relative">
+    <button type="button" id="modal-close" class="absolute top-4 right-4 text-[var(--muted)] hover:text-[var(--fg)] p-1 text-lg z-10 cursor-pointer">✕</button>
+    <div class="mb-5">
+      <h3 id="modal-title" class="font-display text-2xl">로그인</h3>
+      <p id="modal-sub" class="text-xs text-[var(--muted)] mt-1">커뮤니티에 참여하여 사람들과 소통해보세요.</p>
+    </div>
+
+    <div id="auth-error" class="notice text-xs text-red-500 bg-red-50 dark:bg-red-950/40 border-red-200 dark:border-red-900 mb-4 hidden"></div>
+
+    <form id="auth-form" class="space-y-3.5">
+      <div id="name-field-group" class="hidden">
+        <label class="block text-xs text-[var(--muted)] mb-1" for="auth-name">닉네임</label>
+        <input class="field" id="auth-name" type="text" maxlength="20" placeholder="사용할 닉네임을 입력하세요">
+      </div>
+      <div>
+        <label class="block text-xs text-[var(--muted)] mb-1" for="auth-email">이메일</label>
+        <input class="field" id="auth-email" type="email" required placeholder="name@example.com">
+      </div>
+      <div>
+        <label class="block text-xs text-[var(--muted)] mb-1" for="auth-password">비밀번호</label>
+        <input class="field" id="auth-password" type="password" required minlength="6" placeholder="비밀번호 6자 이상">
+      </div>
+
+      <button type="submit" id="auth-submit-btn" class="btn w-full mt-2 py-2.5">로그인</button>
+    </form>
+
+    <div class="mt-5 text-center text-xs text-[var(--muted)] flex items-center justify-center gap-1">
+      <span id="auth-toggle-text">계정이 없으신가요?</span>
+      <button type="button" id="auth-toggle-btn" class="text-[var(--accent)] font-bold hover:underline">회원가입</button>
+    </div>
+  </div>
+</div>
+
+<!-- Image Lightbox Modal -->
+<div id="image-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden cursor-pointer">
+  <div class="relative max-w-4xl max-h-[90vh] flex flex-col items-center justify-center">
+    <img id="image-modal-img" class="max-w-full max-h-[85vh] rounded-lg shadow-2xl object-contain" src="" alt="확대 이미지">
+    <p class="text-white/70 text-xs mt-2 font-medium">화면을 클릭하면 닫힙니다</p>
+  </div>
+</div>
+
+<!-- Profile Edit Modal -->
+<div id="profile-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+  <div class="bg-[var(--surface)] border border-[var(--line)] w-full max-w-md rounded-2xl p-6 shadow-2xl relative">
+    <button type="button" id="profile-modal-close" class="absolute top-4 right-4 text-[var(--muted)] hover:text-[var(--fg)] p-1 text-lg">✕</button>
+    
+    <div class="mb-5">
+      <h3 class="font-display text-2xl">프로필 수정</h3>
+      <p class="text-xs text-[var(--muted)] mt-1">커뮤니티에서 표시될 닉네임과 아바타 사진을 자유롭게 설정해보세요.</p>
+    </div>
+
+    <form id="profile-form" class="space-y-4">
+      <div class="flex items-center gap-4 p-3 bg-[var(--surface-2)] rounded-xl">
+        <img id="profile-preview-avatar" class="w-14 h-14 rounded-full object-cover shadow border border-[var(--line)]" src="" alt="미리보기">
+        <div class="text-xs text-[var(--muted)]">
+          <p class="font-bold text-[var(--fg)] mb-0.5">아바타 미리보기</p>
+          <p id="avatar-mode-desc">원하는 사진을 업로드하거나 기본 색상을 고르세요.</p>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs text-[var(--muted)] mb-1" for="profile-name-input">닉네임</label>
+        <input class="field" id="profile-name-input" type="text" required maxlength="20" placeholder="사용할 닉네임을 입력하세요">
+      </div>
+
+      <div>
+        <label class="block text-xs text-[var(--muted)] mb-1">프로필 사진 직접 업로드</label>
+        <div class="flex items-center gap-2">
+          <label class="btn-secondary text-xs px-3 py-2 cursor-pointer inline-flex items-center gap-1.5 rounded-lg">
+            <span>사진 파일 선택</span>
+            <input type="file" id="profile-image-file" accept="image/*" class="hidden">
+          </label>
+          <button type="button" id="remove-custom-photo" class="text-xs text-[var(--muted)] hover:text-red-500 underline hidden">사진 제거</button>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs text-[var(--muted)] mb-1">기본 아바타 배경 색상</label>
+        <div class="flex gap-2 flex-wrap" id="color-picker-group"></div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" id="profile-cancel-btn" class="btn-secondary text-sm py-2 px-4">취소</button>
+        <button type="submit" id="profile-save-btn" class="btn text-sm py-2 px-4">저장하기</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- JavaScript Integration -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+  import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+  import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+  const appId = typeof __app_id !== 'undefined' ? __app_id : 'apblm-community';
+  
+  const fallbackConfig = {
+    apiKey: "AIzaSyDemoKeyForAPBLMCommunity12345",
+    authDomain: "apblm-community.firebaseapp.com",
+    projectId: "apblm-community",
+    storageBucket: "apblm-community.appspot.com",
+    messagingSenderId: "123456789",
+    appId: "1:123456789:web:abcdef123456"
+  };
+
+  const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : fallbackConfig;
+
+  let app, auth, db;
+  let useOnlineFirebase = true;
+
+  try {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+  } catch (err) {
+    useOnlineFirebase = false;
+  }
+
+  const PUBLIC_DATA_PATH = ['artifacts', appId, 'public', 'data'];
+  const getPublicColl = (colName) => db ? collection(db, ...PUBLIC_DATA_PATH, colName) : null;
+  const getPublicDoc = (colName, docId) => db ? doc(db, ...PUBLIC_DATA_PATH, colName, docId) : null;
+
+  const CATS = [
+    { id: '자유' },
+    { id: '질문' },
+    { id: '정보' },
+    { id: '판매' }
+  ];
+  const CAT_IDS = CATS.map(c => c.id);
+  const AVATAR_COLORS = ['#B3362A', '#1B7F5F', '#5D7480', '#D97706', '#2563EB', '#7C3AED', '#DB2777', '#059669'];
+
+  const localUsersKey = 'apblm_custom_users';
+  const localSessionKey = 'apblm_current_session';
+
+  function getLocalData(key, fallback = []) {
+    try {
+      return JSON.parse(localStorage.getItem(key)) || fallback;
+    } catch(e) { return fallback; }
+  }
+
+  function setLocalData(key, data) {
+    try {
+      localStorage.setItem(key, JSON.stringify(data));
+    } catch(e) {}
+  }
+
+  function getCustomUsers() {
+    return getLocalData(localUsersKey, []);
+  }
+
+  function saveCustomUser(u) {
+    const list = getCustomUsers();
+    list.push(u);
+    setLocalData(localUsersKey, list);
+  }
+
+  function getSavedSession() {
+    return getLocalData(localSessionKey, null);
+  }
+
+  function setSavedSession(user) {
+    try {
+      if (user) {
+        localStorage.setItem(localSessionKey, JSON.stringify(user));
+      } else {
+        localStorage.removeItem(localSessionKey);
+      }
+    } catch(e){}
+  }
+
+  const state = {
+    user: null,
+    customSessionUser: getSavedSession(),
+    profileMap: getLocalData('apblm_profile_map', {}),
+    posts: getLocalData('apblm_posts', []), 
+    comments: getLocalData('apblm_comments', []), 
+    likes: getLocalData('apblm_likes', []),
+    friends: getLocalData('apblm_friends', []),
+    friendRequests: getLocalData('apblm_friend_requests', []),
+    messages: getLocalData('apblm_messages', []),
+    activeChatPartnerId: null,
+    chatHubTab: 'friends',
+    friendSearchQuery: '',
+    cat: '전체', 
+    sort: 'new', 
+    q: '',
+    open: {}, 
+    drafts: {}, 
+    confirmDel: null,
+    postsLoaded: true,
+    authMode: 'login',
+    selectedColor: '#B3362A',
+    customAvatarDataUrl: null,
+    postAttachments: []
+  };
+
+  function syncStateToLocalStorage() {
+    setLocalData('apblm_posts', state.posts);
+    setLocalData('apblm_comments', state.comments);
+    setLocalData('apblm_likes', state.likes);
+    setLocalData('apblm_friends', state.friends);
+    setLocalData('apblm_friend_requests', state.friendRequests);
+    setLocalData('apblm_messages', state.messages);
+    setLocalData('apblm_profile_map', state.profileMap);
+  }
+
+  async function ensureFirebaseAuth() {
+    if (!useOnlineFirebase || !auth) return null;
+    if (!auth.currentUser) {
+      try {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
+        }
+      } catch(e) {
+        try { await signInAnonymously(auth); } catch(err){}
+      }
+    }
+    return auth.currentUser;
+  }
+
+  function getCurrentUserUid() {
+    if (state.customSessionUser) return state.customSessionUser.uid;
+    return state.user?.uid || null;
+  }
+
+  function getCurrentUserName() {
+    if (state.customSessionUser) return state.customSessionUser.displayName;
+    return state.user?.displayName || state.user?.email?.split('@')[0] || '익명';
+  }
+
+  const IC = {
+    heart: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 20.3S4.5 15.8 4.5 10.3A4.4 4.4 0 0 1 12 7.5a4.4 4.4 0 0 1 7.5 2.8c0 5.5-7.5 10-7.5 10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
+    chat: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 5.5h16v10H9.5L5.5 19v-3.5H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
+    trash: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>'
+  };
+
+  function $(id) { return document.getElementById(id); }
+
+  function h(tag, props, ...kids) {
+    const e = document.createElement(tag);
+    if (props) {
+      Object.keys(props).forEach(k => {
+        const v = props[k];
+        if (v == null || v === false) return;
+        if (k === 'class') e.className = v;
+        else if (k === 'on') Object.keys(v).forEach(ev => e.addEventListener(ev, v[ev]));
+        else if (k === 'value') e.value = v;
+        else if (k === 'html') e.innerHTML = v;
+        else if (v === true) e.setAttribute(k, '');
+        else e.setAttribute(k, v);
+      });
+    }
+    const add = (list) => {
+      list.forEach(c => {
+        if (c == null || c === false) return;
+        if (Array.isArray(c)) return add(c);
+        e.append(c.nodeType ? c : document.createTextNode(String(c)));
+      });
+    };
+    add(kids);
+    return e;
+  }
+
+  function icon(name) { return h('span', { html: IC[name], 'aria-hidden': 'true', style: 'display:inline-flex' }); }
+
+  function avatarFor(name, color = '#B3362A') {
+    const t = (name || '?').trim().slice(0, 1) || '?';
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" rx="20" fill="${color}"/><text x="20" y="26.5" font-size="18" text-anchor="middle" fill="#fff" font-family="sans-serif">${t.replace(/[<>&"']/g, '')}</text></svg>`;
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+  }
+
+  function getUserInfo(uid, defaultName) {
+    if (!uid) return { name: '익명', avatarUrl: avatarFor('익명') };
+    const p = state.profileMap[uid];
+    const name = p?.name || defaultName || '회원';
+    const color = p?.color || '#B3362A';
+    
+    let savedAvatar = p?.avatarUrl;
+    if (!savedAvatar && state.customSessionUser && state.customSessionUser.uid === uid) {
+      savedAvatar = state.customSessionUser.avatarUrl;
+    }
+    return { name, avatarUrl: savedAvatar || avatarFor(name, color) };
+  }
+
+  function ago(ts) {
+    if (!ts) return '방금 전';
+    const s = Math.max(0, (Date.now() - ts) / 1000);
+    if (s < 45) return '방금 전';
+    const m = s / 60;
+    if (m < 60) return Math.round(m) + '분 전';
+    const hr = m / 60;
+    if (hr < 24) return Math.round(hr) + '시간 전';
+    const d = hr / 24;
+    if (d < 7) return Math.floor(d) + '일 전';
+    return new Date(ts).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' });
+  }
+
+  function say(msg) {
+    const n = $('notice');
+    if (!n) return;
+    n.textContent = msg;
+    n.hidden = false;
+    clearTimeout(say.t);
+    say.t = setTimeout(() => { n.hidden = true; }, 5000);
+  }
+
+  function skel() {
+    return h('div', { class: 'skel' }, h('i'), h('i'), h('i'));
+  }
+
+  function openAuthModal(mode = 'login') {
+    state.authMode = mode;
+    const isSignup = mode === 'signup';
+    const mTitle = $('modal-title');
+    const mSub = $('modal-sub');
+    const sBtn = $('auth-submit-btn');
+    const nGroup = $('name-field-group');
+    const tText = $('auth-toggle-text');
+    const tBtn = $('auth-toggle-btn');
+    const errEl = $('auth-error');
+    const form = $('auth-form');
+
+    if (mTitle) mTitle.textContent = isSignup ? '회원가입' : '로그인';
+    if (mSub) mSub.textContent = isSignup ? '새 계정을 만들고 자유롭게 이용해 보세요.' : '커뮤니티에 참여하여 사람들과 소통해보세요.';
+    if (sBtn) sBtn.textContent = isSignup ? '회원가입 완료' : '로그인';
+    if (nGroup) nGroup.classList.toggle('hidden', !isSignup);
+    if (tText) tText.textContent = isSignup ? '이미 계정이 있으신가요?' : '계정이 없으신가요?';
+    if (tBtn) tBtn.textContent = isSignup ? '로그인하기' : '회원가입';
+    if (errEl) errEl.classList.add('hidden');
+    if (form) form.reset();
+    
+    const modal = $('auth-modal');
+    if (modal) modal.classList.remove('hidden');
+  }
+
+  function closeAuthModal() {
+    const modal = $('auth-modal');
+    if (modal) modal.classList.add('hidden');
+  }
+
+  function showAuthError(msg) {
+    const errEl = $('auth-error');
+    if (errEl) {
+      errEl.textContent = msg;
+      errEl.classList.remove('hidden');
+    }
+  }
+
+  function renderAuthBar() {
+    const bar = $('auth-bar');
+    if (!bar) return;
+    bar.innerHTML = '';
+
+    const currentUid = getCurrentUserUid();
+    const isLogged = !!state.customSessionUser;
+    const floatBtn = $('floating-chat-btn');
+
+    if (isLogged && currentUid) {
+      if (floatBtn) floatBtn.classList.remove('hidden');
+      const name = getCurrentUserName();
+      const info = getUserInfo(currentUid, name);
+
+      bar.appendChild(
+        h('div', { class: 'flex items-center gap-2' },
+          h('button', {
+            type: 'button',
+            class: 'flex items-center gap-2 hover:opacity-80 transition-opacity focus:outline-none bg-[var(--surface-2)] px-2.5 py-1.5 rounded-full border border-[var(--line)]',
+            title: '프로필 수정하기',
+            on: { click: () => openProfileModal() }
+          },
+            h('img', { class: 'w-6 h-6 rounded-full object-cover shadow-sm', src: info.avatarUrl, alt: info.name }),
+            h('span', { class: 'text-sm font-medium' }, info.name),
+            h('span', { class: 'text-[10px] bg-[var(--surface)] text-[var(--muted)] px-1.5 py-0.5 rounded border border-[var(--line)]' }, '수정')
+          ),
+          h('button', {
+            type: 'button',
+            class: 'btn-secondary text-xs px-3 py-1.5 ml-1',
+            on: { 
+              click: async () => {
+                state.customSessionUser = null;
+                setSavedSession(null);
+                say('로그아웃되었습니다.');
+                render();
+              } 
+            }
+          }, '로그아웃')
+        )
+      );
+    } else {
+      if (floatBtn) floatBtn.classList.add('hidden');
+      bar.appendChild(
+        h('div', { class: 'flex items-center gap-2' },
+          h('button', {
+            type: 'button',
+            class: 'btn-secondary text-xs px-3 py-1.5',
+            on: { click: () => openAuthModal('login') }
+          }, '로그인'),
+          h('button', {
+            type: 'button',
+            class: 'btn text-xs px-3 py-1.5',
+            on: { click: () => openAuthModal('signup') }
+          }, '회원가입')
+        )
+      );
+    }
+  }
+
+  function renderBoards() {
+    const list = $('boards');
+    if (!list) return;
+    list.innerHTML = '';
+
+    const counts = {};
+    state.posts.forEach(p => {
+      counts[p.category] = (counts[p.category] || 0) + 1;
+    });
+
+    const categories = [{ id: '전체' }, ...CATS];
+
+    categories.forEach(cat => {
+      const isSelected = state.cat === cat.id;
+      const count = cat.id === '전체' ? state.posts.length : (counts[cat.id] || 0);
+
+      const li = h('li', null,
+        h('button', {
+          type: 'button',
+          class: 'board-btn',
+          'aria-current': String(isSelected),
+          on: {
+            click: () => {
+              state.cat = cat.id;
+              render();
+            }
+          }
+        },
+          h('span', { class: 'b-name' }, cat.id),
+          h('span', { class: 'b-count' }, String(count))
+        )
+      );
+      list.appendChild(li);
+    });
+  }
+
+  function syncComposer() {
+    const comp = $('composer');
+    if (!comp) return;
+    const isLogged = !!state.customSessionUser;
+
+    if (!isLogged) {
+      comp.replaceChildren(
+        h('div', { class: 'text-center py-4 bg-[var(--surface-2)] rounded-lg' },
+          h('p', { class: 'text-sm text-[var(--muted)] mb-3' }, '게시글과 댓글을 작성하려면 로그인이 필요합니다.'),
+          h('div', { class: 'flex justify-center gap-2' },
+            h('button', { type: 'button', class: 'btn-secondary text-xs px-4 py-2', on: { click: () => openAuthModal('login') } }, '로그인'),
+            h('button', { type: 'button', class: 'btn text-xs px-4 py-2', on: { click: () => openAuthModal('signup') } }, '회원가입')
+          )
+        )
+      );
+      return;
+    }
+
+    const currentCat = CAT_IDS.includes(state.cat) ? state.cat : CATS[0].id;
+
+    comp.replaceChildren(
+      h('div', { class: 'flex gap-2 items-center' },
+        h('select', { id: 'f-cat', class: 'field' },
+          CATS.map(c => h('option', { value: c.id, selected: c.id === currentCat }, c.id))
+        ),
+        h('span', { class: 'text-xs text-[var(--muted)]' }, `작성자: ${getCurrentUserName()}`)
+      ),
+      h('input', { id: 'f-title', class: 'field', type: 'text', placeholder: '제목을 입력하세요', maxlength: '100' }),
+      h('textarea', { id: 'f-body', class: 'field', placeholder: '내용을 작성해보세요...', rows: '3' }),
+      h('div', { class: 'flex justify-end pt-1' },
+        h('button', {
+          type: 'button', class: 'btn text-sm',
+          on: { click: () => createPost() }
+        }, '글쓰기')
+      )
+    );
+  }
+
+  async function createPost() {
+    const titleEl = $('f-title');
+    const bodyEl = $('f-body');
+    const catEl = $('f-cat');
+
+    const title = titleEl ? titleEl.value.trim() : '';
+    const body = bodyEl ? bodyEl.value.trim() : '';
+    const category = catEl ? catEl.value : CATS[0].id;
+
+    if (!title || !body) {
+      say('제목과 내용을 모두 입력해 주세요.');
+      return;
+    }
+
+    const postData = {
+      id: 'post_' + Date.now(),
+      title,
+      body,
+      category,
+      customAuthorId: getCurrentUserUid(),
+      authorName: getCurrentUserName(),
+      createdAt: Date.now()
+    };
+
+    state.posts.unshift(postData);
+    syncStateToLocalStorage();
+
+    if (titleEl) titleEl.value = '';
+    if (bodyEl) bodyEl.value = '';
+    say('게시글이 성공적으로 등록되었습니다.');
+    render();
+  }
+
+  async function deletePost(postId) {
+    if (state.confirmDel !== postId) {
+      state.confirmDel = postId;
+      render();
+      setTimeout(() => {
+        if (state.confirmDel === postId) {
+          state.confirmDel = null;
+          render();
+        }
+      }, 3000);
+      return;
+    }
+
+    state.posts = state.posts.filter(p => p.id !== postId);
+    syncStateToLocalStorage();
+    state.confirmDel = null;
+    say('게시글이 삭제되었습니다.');
+    render();
+  }
+
+  async function toggleLike(postId) {
+    const myUid = getCurrentUserUid();
+    if (!myUid) {
+      openAuthModal('login');
+      return;
+    }
+
+    const existingLike = state.likes.find(l => l.postId === postId && l.customUserId === myUid);
+    if (existingLike) {
+      state.likes = state.likes.filter(l => l.id !== existingLike.id);
+    } else {
+      state.likes.push({
+        id: 'like_' + Date.now(),
+        postId,
+        customUserId: myUid,
+        createdAt: Date.now()
+      });
+    }
+    syncStateToLocalStorage();
+    render();
+  }
+
+  async function sendComment(postId) {
+    const text = (state.drafts[postId] || '').trim();
+    if (!text) return;
+
+    const commentData = {
+      id: 'cmt_' + Date.now(),
+      postId,
+      body: text,
+      customAuthorId: getCurrentUserUid(),
+      authorName: getCurrentUserName(),
+      createdAt: Date.now()
+    };
+
+    state.comments.push(commentData);
+    syncStateToLocalStorage();
+    state.drafts[postId] = '';
+    render();
+  }
+
+  async function deleteComment(commentId) {
+    state.comments = state.comments.filter(c => c.id !== commentId);
+    syncStateToLocalStorage();
+    say('댓글이 삭제되었습니다.');
+    render();
+  }
+
+  function renderFeed() {
+    const container = $('feed');
+    if (!container) return;
+
+    let posts = [...state.posts];
+    if (state.cat !== '전체') {
+      posts = posts.filter(p => p.category === state.cat);
+    }
+
+    const q = state.q.trim().toLowerCase();
+    if (q) {
+      posts = posts.filter(p => 
+        (p.title && p.title.toLowerCase().includes(q)) ||
+        (p.body && p.body.toLowerCase().includes(q)) ||
+        (p.authorName && p.authorName.toLowerCase().includes(q))
+      );
+    }
+
+    const deriveData = derive();
+    if (state.sort === 'hot') {
+      posts.sort((a, b) => {
+        const likesA = deriveData.likeBy[a.id] || 0;
+        const likesB = deriveData.likeBy[b.id] || 0;
+        if (likesB !== likesA) return likesB - likesA;
+        return (b.createdAt || 0) - (a.createdAt || 0);
+      });
+    } else {
+      posts.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    }
+
+    if (posts.length === 0) {
+      container.replaceChildren(
+        h('div', { class: 'text-center py-12 bg-[var(--surface)] rounded-xl border border-[var(--line)] text-[var(--muted)]' },
+          q ? '검색된 게시글이 없습니다.' : '게시글이 아직 없습니다. 첫 글을 남겨보세요!'
+        )
+      );
+      return;
+    }
+
+    container.replaceChildren(...posts.map(p => postCard(p, deriveData)));
+  }
+
+  function postCard(p, deriveData) {
+    const uid = getCurrentUserUid();
+    const isOpen = state.open[p.id] ?? false;
+    const likesCount = deriveData.likeBy[p.id] || 0;
+    const isLiked = !!deriveData.mine[p.id];
+    const comments = deriveData.cBy[p.id] || [];
+    const authorInfo = getUserInfo(p.customAuthorId, p.authorName);
+    const isMine = uid && p.customAuthorId === uid;
+    const isArm = state.confirmDel === p.id;
+
+    const postElem = h('article', { class: 'post' },
+      h('div', { class: 'flex items-center justify-between gap-2 mb-2' },
+        h('div', { class: 'flex items-center gap-2 flex-wrap' },
+          h('span', { class: 'chip' }, p.category),
+          h('img', { class: 'w-5 h-5 rounded-full object-cover', src: authorInfo.avatarUrl, alt: authorInfo.name }),
+          h('span', { class: 'text-xs text-[var(--muted)] font-medium' }, authorInfo.name),
+          h('span', { class: 'text-xs text-[var(--muted)]' }, '•'),
+          h('span', { class: 'text-xs text-[var(--muted)]' }, ago(p.createdAt))
+        ),
+        isMine ? h('button', {
+          type: 'button',
+          class: `act del ${isArm ? 'armed' : ''}`,
+          title: '글 삭제',
+          on: { click: () => deletePost(p.id) }
+        }, icon('trash'), isArm ? '정말 삭제?' : '') : null
+      ),
+      h('h3', { class: 'post-title' },
+        h('button', {
+          type: 'button', class: 'title-btn',
+          on: { click: () => { state.open[p.id] = !isOpen; render(); } }
+        }, p.title)
+      ),
+      h('div', { class: `post-body ${!isOpen ? 'clamp' : ''}` }, p.body),
+      h('div', { class: 'flex items-center gap-2 mt-3 pt-2 border-t border-[var(--line)]' },
+        h('button', {
+          type: 'button',
+          class: 'act like',
+          'aria-pressed': String(isLiked),
+          on: { click: () => toggleLike(p.id) }
+        }, icon('heart'), h('span', null, String(likesCount))),
+        h('button', {
+          type: 'button',
+          class: 'act',
+          on: { click: () => { state.open[p.id] = !isOpen; render(); } }
+        }, icon('chat'), h('span', null, String(comments.length)))
+      )
+    );
+
+    if (isOpen) {
+      const isLogged = !!state.customSessionUser;
+      const cListElem = h('ul', { class: 'clist' },
+        comments.map(c => {
+          const cAuthor = getUserInfo(c.customAuthorId, c.authorName);
+          const isCmtMine = uid && c.customAuthorId === uid;
+          return h('li', { class: 'cmt' },
+            h('img', { class: 'av object-cover', src: cAuthor.avatarUrl, alt: cAuthor.name }),
+            h('div', { class: 'min-w-0' },
+              h('div', { class: 'meta flex items-center gap-1.5 flex-wrap' },
+                h('b', null, cAuthor.name),
+                h('span', null, ago(c.createdAt))
+              ),
+              h('div', { class: 'text-sm mt-0.5 break-words' }, c.body)
+            ),
+            isCmtMine ? h('button', {
+              type: 'button',
+              class: 'text-xs text-[var(--muted)] hover:text-red-500 p-1',
+              on: { click: () => deleteComment(c.id) }
+            }, '삭제') : null
+          );
+        })
+      );
+
+      const commentSection = h('div', { class: 'comments' },
+        cListElem,
+        isLogged ? h('div', { class: 'flex gap-2 mt-2' },
+          h('input', {
+            type: 'text',
+            class: 'field text-sm',
+            placeholder: '댓글을 입력하세요...',
+            value: state.drafts[p.id] || '',
+            on: {
+              input: (e) => { state.drafts[p.id] = e.target.value; },
+              keydown: (e) => { if (e.key === 'Enter') sendComment(p.id); }
+            }
+          }),
+          h('button', {
+            type: 'button',
+            class: 'btn text-xs whitespace-nowrap px-4',
+            on: { click: () => sendComment(p.id) }
+          }, '등록')
+        ) : h('p', { class: 'text-xs text-[var(--muted)] text-center py-2' }, '댓글을 남기려면 로그인해주세요.')
+      );
+
+      postElem.appendChild(commentSection);
+    }
+
+    return postElem;
+  }
+
+  function derive() {
+    const likeBy = {}, cBy = {}, mine = {};
+    const uid = getCurrentUserUid();
+
+    state.likes.forEach(l => {
+      likeBy[l.postId] = (likeBy[l.postId] || 0) + 1;
+      if (uid && l.customUserId === uid) {
+        mine[l.postId] = true;
+      }
+    });
+    state.comments.forEach(c => { 
+      (cBy[c.postId] = cBy[c.postId] || []).push(c); 
+    });
+    Object.keys(cBy).forEach(k => { 
+      cBy[k].sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0)); 
+    });
+    return { likeBy, cBy, mine };
+  }
+
+  function render() {
+    renderAuthBar();
+    renderBoards();
+    renderFeed();
+    syncComposer();
+    const sNew = $('sort-new');
+    const sHot = $('sort-hot');
+    if (sNew) sNew.setAttribute('aria-pressed', String(state.sort === 'new'));
+    if (sHot) sHot.setAttribute('aria-pressed', String(state.sort === 'hot'));
+  }
+
+  function openProfileModal() {
+    const uid = getCurrentUserUid();
+    if (!uid) return;
+    const currentInfo = getUserInfo(uid, getCurrentUserName());
+    const inputName = $('profile-name-input');
+    if (inputName) inputName.value = currentInfo.name;
+    const modal = $('profile-modal');
+    if (modal) modal.classList.remove('hidden');
+  }
+
+  function closeProfileModal() {
+    const modal = $('profile-modal');
+    if (modal) modal.classList.add('hidden');
+  }
+
+  function initProfileForm() {
+    const closeBtn = $('profile-modal-close');
+    const cancelBtn = $('profile-cancel-btn');
+    const form = $('profile-form');
+    if (closeBtn) closeBtn.addEventListener('click', closeProfileModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeProfileModal);
+
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const newName = $('profile-name-input').value.trim();
+        const uid = getCurrentUserUid();
+        if (!newName || !uid) return;
+
+        state.profileMap[uid] = { name: newName, color: state.selectedColor };
+        if (state.customSessionUser) {
+          state.customSessionUser.displayName = newName;
+          setSavedSession(state.customSessionUser);
+        }
+        syncStateToLocalStorage();
+        say('프로필이 수정되었습니다.');
+        closeProfileModal();
+        render();
+      });
+    }
+  }
+
+  function initAuth() {
+    const authForm = $('auth-form');
+    if (authForm) {
+      authForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = $('auth-email').value.trim();
+        const password = $('auth-password').value;
+        const isSignup = state.authMode === 'signup';
+        const customUsers = getCustomUsers();
+
+        if (isSignup) {
+          const existing = customUsers.find(u => u.email === email);
+          if (existing) {
+            showAuthError('이미 등록된 이메일 주소입니다.');
+            return;
+          }
+          const displayName = ($('auth-name').value.trim()) || email.split('@')[0];
+          const uid = 'usr_' + Date.now();
+          const newUser = { uid, email, password, displayName };
+          saveCustomUser(newUser);
+          state.customSessionUser = newUser;
+          setSavedSession(newUser);
+          say('회원가입 완료!');
+          closeAuthModal();
+          render();
+        } else {
+          const found = customUsers.find(u => u.email === email && u.password === password);
+          if (!found) {
+            showAuthError('이메일 또는 비밀번호가 잘못되었습니다.');
+            return;
+          }
+          state.customSessionUser = found;
+          setSavedSession(found);
+          say('로그인되었습니다.');
+          closeAuthModal();
+          render();
+        }
+      });
+    }
+
+    $('auth-toggle-btn')?.addEventListener('click', () => {
+      openAuthModal(state.authMode === 'login' ? 'signup' : 'login');
+    });
+    $('modal-close')?.addEventListener('click', closeAuthModal);
+  }
+
+  initProfileForm();
+  initAuth();
+
+  $('search')?.addEventListener('input', (e) => { state.q = e.target.value; render(); });
+  $('sort-new')?.addEventListener('click', () => { state.sort = 'new'; render(); });
+  $('sort-hot')?.addEventListener('click', () => { state.sort = 'hot'; render(); });
+
+  render();
+</script>
+</body>
+</html>
