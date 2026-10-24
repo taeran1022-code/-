@@ -96,16 +96,6 @@
     .board-btn:hover:not([aria-current="true"]) { background: var(--surface-2); }
   }
 
-  /* Left Sidebar Chat & Friends Section */
-  .sidebar-chat-box {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-
   /* Guide and banners */
   .guide { border: 1px dashed var(--line); border-radius: 10px; padding: 14px 16px; }
   .guide h2 { margin: 0 0 6px; font: 400 17px/1.3 var(--font-display); }
@@ -166,21 +156,6 @@
   .cmt .av { width: 24px; height: 24px; border-radius: 50%; }
   .cmt .meta { font-size: 13px; color: var(--muted); }
   .cmt .meta b { color: var(--fg); font-weight: 500; margin-right: 6px; }
-
-  /* Chat & Friends Floating Widget */
-  .chat-widget-btn {
-    position: fixed; bottom: 24px; right: 24px; z-index: 40;
-    background: var(--accent); color: var(--accent-fg);
-    border-radius: 999px; padding: 12px 18px;
-    display: flex; align-items: center; gap: 8px;
-    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
-    font-weight: 700; transition: transform 0.2s;
-  }
-  .chat-widget-btn:hover { transform: scale(1.05); }
-  .badge-count {
-    background: #FF3B30; color: white; border-radius: 999px;
-    font-size: 11px; padding: 2px 7px; font-weight: 800;
-  }
 </style>
 </head>
 <body>
@@ -198,29 +173,6 @@
       <div>
         <h3 class="font-display text-sm text-[var(--muted)] mb-2 px-1 hidden md:block">카테고리</h3>
         <ul class="boards" id="boards" aria-label="게시판"></ul>
-      </div>
-
-      <!-- Left Sidebar Friends & Chat Panel -->
-      <div id="sidebar-friends-chat" class="sidebar-chat-box shadow-sm hidden md:flex flex-col">
-        <div class="p-3 border-b border-[var(--line)] bg-[var(--surface-2)] flex items-center justify-between">
-          <h3 class="font-display text-base flex items-center gap-1.5">
-            <span>💬</span> 친구 & 메신저
-          </h3>
-          <span id="left-req-count-badge" class="badge-count hidden">0</span>
-        </div>
-
-        <div class="flex border-b border-[var(--line)] text-xs font-bold text-center bg-[var(--surface)]">
-          <button type="button" id="side-tab-friends" class="flex-1 py-2 border-b-2 border-[var(--accent)] text-[var(--accent)]">친구</button>
-          <button type="button" id="side-tab-requests" class="flex-1 py-2 border-b-2 border-transparent text-[var(--muted)] relative">
-            신청 <span id="side-req-badge" class="text-[9px] bg-red-500 text-white rounded-full px-1 ml-0.5 hidden">0</span>
-          </button>
-        </div>
-
-        <div class="p-2 border-b border-[var(--line)]">
-          <input id="side-friend-search" type="search" class="field text-xs py-1" placeholder="친구 닉네임 검색">
-        </div>
-
-        <div id="side-chat-list" class="max-h-[220px] overflow-y-auto divide-y divide-[var(--line)] text-xs"></div>
       </div>
     </aside>
 
@@ -256,61 +208,6 @@
 
       <div id="feed" aria-live="polite"></div>
     </main>
-  </div>
-</div>
-
-<!-- Floating Friends & Chat Launcher Button (Mobile only) -->
-<button id="floating-chat-btn" class="chat-widget-btn md:hidden hidden" type="button">
-  <span>💬</span>
-  <span>친구 & 채팅</span>
-  <span id="unread-total-badge" class="badge-count hidden">0</span>
-</button>
-
-<!-- Friends & Chat Hub Modal -->
-<div id="friends-chat-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-  <div class="bg-[var(--surface)] border border-[var(--line)] w-full max-w-2xl h-[85vh] max-h-[680px] rounded-2xl flex flex-col shadow-2xl relative overflow-hidden">
-    <div class="p-4 border-b border-[var(--line)] flex items-center justify-between bg-[var(--surface-2)]">
-      <div class="flex items-center gap-2">
-        <h3 class="font-display text-xl">친구 & 메신저</h3>
-      </div>
-      <button type="button" id="chat-hub-close" class="text-[var(--muted)] hover:text-[var(--fg)] p-1 text-lg">✕</button>
-    </div>
-
-    <div class="flex-1 flex overflow-hidden">
-      <div class="w-1/3 min-w-[200px] border-r border-[var(--line)] flex flex-col bg-[var(--surface)]">
-        <div class="flex border-b border-[var(--line)] text-xs font-bold text-center">
-          <button type="button" id="tab-friends-btn" class="flex-1 py-2.5 border-b-2 border-[var(--accent)] text-[var(--accent)]">친구 목록</button>
-          <button type="button" id="tab-requests-btn" class="flex-1 py-2.5 border-b-2 border-transparent text-[var(--muted)] relative">
-            신청 <span id="req-count-badge" class="text-[10px] bg-red-500 text-white rounded-full px-1.5 py-0.5 ml-0.5 hidden">0</span>
-          </button>
-        </div>
-
-        <div id="friend-search-box" class="p-2 border-b border-[var(--line)]">
-          <input id="friend-search-input" type="search" class="field text-xs py-1.5" placeholder="닉네임/이메일로 친구검색">
-        </div>
-
-        <div id="chat-sidebar-list" class="flex-1 overflow-y-auto divide-y divide-[var(--line)]"></div>
-      </div>
-
-      <div class="flex-1 flex flex-col bg-[var(--bg)]">
-        <div id="chat-partner-header" class="p-3 border-b border-[var(--line)] bg-[var(--surface)] flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="text-xs text-[var(--muted)]">대화 상대를 선택해주세요</span>
-          </div>
-        </div>
-
-        <div id="chat-messages-box" class="flex-1 p-4 overflow-y-auto space-y-3 flex flex-col">
-          <div class="text-center text-xs text-[var(--muted)] my-auto">
-            👈 왼쪽 목록에서 친구를 선택하여 채팅을 시작해보세요!
-          </div>
-        </div>
-
-        <form id="chat-send-form" class="p-2.5 border-t border-[var(--line)] bg-[var(--surface)] flex gap-2 hidden">
-          <input id="chat-input-field" type="text" class="field text-sm flex-1" placeholder="메시지를 입력하세요..." autocomplete="off">
-          <button type="submit" class="btn text-xs px-4">전송</button>
-        </form>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -403,7 +300,7 @@
   import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
   import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-  const appId = typeof __app_id !== 'undefined' ? __app_id : 'apblm-community';
+  const appId = typeof __app_id !== 'undefined' ? __app_id : 'ssss-ff011';
   
   const fallbackConfig = {
     apiKey: "AIzaSyD2nqYYsS4YXgBbGo1LZc3-tDSwpU7vwhQ",
@@ -425,6 +322,7 @@
     auth = getAuth(app);
     db = getFirestore(app);
   } catch (err) {
+    console.warn("Firebase 연결 실패. 로컬 모드로 동작합니다.", err);
     useOnlineFirebase = false;
   }
 
@@ -484,12 +382,9 @@
     user: null,
     customSessionUser: getSavedSession(),
     profileMap: getLocalData('apblm_profile_map', {}),
-    posts: getLocalData('apblm_posts', []), 
-    comments: getLocalData('apblm_comments', []), 
-    likes: getLocalData('apblm_likes', []),
-    friends: getLocalData('apblm_friends', []),
-    friendRequests: getLocalData('apblm_friend_requests', []),
-    messages: getLocalData('apblm_messages', []),
+    posts: [], 
+    comments: [], 
+    likes: [],
     activeChatPartnerId: null,
     chatHubTab: 'friends',
     friendSearchQuery: '',
@@ -505,16 +400,6 @@
     customAvatarDataUrl: null,
     postAttachments: []
   };
-
-  function syncStateToLocalStorage() {
-    setLocalData('apblm_posts', state.posts);
-    setLocalData('apblm_comments', state.comments);
-    setLocalData('apblm_likes', state.likes);
-    setLocalData('apblm_friends', state.friends);
-    setLocalData('apblm_friend_requests', state.friendRequests);
-    setLocalData('apblm_messages', state.messages);
-    setLocalData('apblm_profile_map', state.profileMap);
-  }
 
   async function ensureFirebaseAuth() {
     if (!useOnlineFirebase || !auth) return null;
@@ -618,6 +503,10 @@
     say.t = setTimeout(() => { n.hidden = true; }, 5000);
   }
 
+  function skel() {
+    return h('div', { class: 'skel' }, h('i'), h('i'), h('i'));
+  }
+
   function openAuthModal(mode = 'login') {
     state.authMode = mode;
     const isSignup = mode === 'signup';
@@ -663,10 +552,8 @@
 
     const currentUid = getCurrentUserUid();
     const isLogged = !!state.customSessionUser;
-    const floatBtn = $('floating-chat-btn');
 
     if (isLogged && currentUid) {
-      if (floatBtn) floatBtn.classList.remove('hidden');
       const name = getCurrentUserName();
       const info = getUserInfo(currentUid, name);
 
@@ -697,7 +584,6 @@
         )
       );
     } else {
-      if (floatBtn) floatBtn.classList.add('hidden');
       bar.appendChild(
         h('div', { class: 'flex items-center gap-2' },
           h('button', {
@@ -803,23 +689,38 @@
       return;
     }
 
-    const postData = {
-      id: 'post_' + Date.now(),
-      title,
-      body,
-      category,
-      customAuthorId: getCurrentUserUid(),
-      authorName: getCurrentUserName(),
-      createdAt: Date.now()
-    };
+    try {
+      const activeUser = await ensureFirebaseAuth();
+      const activeUid = activeUser ? activeUser.uid : 'anon';
+      const customUid = getCurrentUserUid();
+      const authorName = getCurrentUserName();
 
-    state.posts.unshift(postData);
-    syncStateToLocalStorage();
+      const postData = {
+        id: 'post_' + Date.now(),
+        title,
+        body,
+        category,
+        authorId: activeUid,
+        userId: activeUid,
+        customAuthorId: customUid,
+        authorName,
+        createdAt: Date.now()
+      };
 
-    if (titleEl) titleEl.value = '';
-    if (bodyEl) bodyEl.value = '';
-    say('게시글이 성공적으로 등록되었습니다.');
-    render();
+      if (useOnlineFirebase && db) {
+        await addDoc(getPublicColl('posts'), postData);
+      } else {
+        state.posts.unshift(postData);
+      }
+
+      if (titleEl) titleEl.value = '';
+      if (bodyEl) bodyEl.value = '';
+      say('게시글이 성공적으로 등록되었습니다.');
+      render();
+    } catch (err) {
+      console.error('Post Creation Error:', err);
+      say('게시글 등록 중 오류가 발생했습니다.');
+    }
   }
 
   async function deletePost(postId) {
@@ -835,11 +736,18 @@
       return;
     }
 
-    state.posts = state.posts.filter(p => p.id !== postId);
-    syncStateToLocalStorage();
-    state.confirmDel = null;
-    say('게시글이 삭제되었습니다.');
-    render();
+    try {
+      if (useOnlineFirebase && db) {
+        deleteDoc(getPublicDoc('posts', postId)).catch(e => console.warn(e));
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      state.posts = state.posts.filter(p => p.id !== postId);
+      state.confirmDel = null;
+      say('게시글이 삭제되었습니다.');
+      render();
+    }
   }
 
   async function toggleLike(postId) {
@@ -849,437 +757,100 @@
       return;
     }
 
-    const existingLike = state.likes.find(l => l.postId === postId && l.customUserId === myUid);
-    if (existingLike) {
-      state.likes = state.likes.filter(l => l.id !== existingLike.id);
-    } else {
-      state.likes.push({
-        id: 'like_' + Date.now(),
-        postId,
-        customUserId: myUid,
-        createdAt: Date.now()
-      });
+    try {
+      const activeUser = await ensureFirebaseAuth();
+      const activeUid = activeUser ? activeUser.uid : 'anon';
+
+      const existingLike = state.likes.find(l => 
+        l.postId === postId && 
+        ((l.userId === activeUid) || (l.authorId === activeUid) || (l.customUserId === myUid))
+      );
+
+      if (existingLike) {
+        if (useOnlineFirebase && db) {
+          await deleteDoc(getPublicDoc('likes', existingLike.id));
+        } else {
+          state.likes = state.likes.filter(l => l.id !== existingLike.id);
+        }
+      } else {
+        const likeData = {
+          id: 'like_' + Date.now(),
+          postId,
+          authorId: activeUid,
+          userId: activeUid,
+          customUserId: myUid,
+          createdAt: Date.now()
+        };
+        if (useOnlineFirebase && db) {
+          await addDoc(getPublicColl('likes'), likeData);
+        } else {
+          state.likes.push(likeData);
+        }
+      }
+      render();
+    } catch (err) {
+      console.error(err);
+      say('좋아요 처리 중 오류가 발생했습니다.');
     }
-    syncStateToLocalStorage();
-    render();
   }
 
   async function sendComment(postId) {
     const text = (state.drafts[postId] || '').trim();
     if (!text) return;
 
-    const commentData = {
-      id: 'cmt_' + Date.now(),
-      postId,
-      body: text,
-      customAuthorId: getCurrentUserUid(),
-      authorName: getCurrentUserName(),
-      createdAt: Date.now()
-    };
+    try {
+      const activeUser = await ensureFirebaseAuth();
+      const activeUid = activeUser ? activeUser.uid : 'anon';
+      const customUid = getCurrentUserUid();
+      const authorName = getCurrentUserName();
 
-    state.comments.push(commentData);
-    syncStateToLocalStorage();
-    state.drafts[postId] = '';
-    render();
+      const commentData = {
+        id: 'cmt_' + Date.now(),
+        postId,
+        body: text,
+        authorId: activeUid,
+        userId: activeUid,
+        customAuthorId: customUid,
+        authorName,
+        createdAt: Date.now()
+      };
+
+      if (useOnlineFirebase && db) {
+        await addDoc(getPublicColl('comments'), commentData);
+      } else {
+        state.comments.push(commentData);
+      }
+
+      state.drafts[postId] = '';
+      render();
+    } catch (err) {
+      console.error(err);
+      say('댓글 등록 중 오류가 발생했습니다.');
+    }
   }
 
   async function deleteComment(commentId) {
-    state.comments = state.comments.filter(c => c.id !== commentId);
-    syncStateToLocalStorage();
-    say('댓글이 삭제되었습니다.');
-    render();
-  }
-
-  function renderUserActionMenu(authorUid, authorName) {
-    const myUid = getCurrentUserUid();
-    if (!myUid || authorUid === myUid) return null;
-
-    const isFriend = state.friends.some(f => (f.user1 === myUid && f.user2 === authorUid) || (f.user2 === myUid && f.user1 === authorUid));
-
-    return h('div', { class: 'flex items-center gap-1.5 ml-1' },
-      h('button', {
-        type: 'button',
-        class: 'text-[11px] bg-[var(--surface-2)] text-[var(--accent)] border border-[var(--line)] px-2 py-0.5 rounded-full hover:bg-[var(--accent)] hover:text-white transition-colors',
-        on: { click: () => startDirectChat(authorUid) }
-      }, '💬 채팅'),
-      !isFriend ? h('button', {
-        type: 'button',
-        class: 'text-[11px] bg-[var(--accent-soft)] text-[var(--accent-ink)] border border-[var(--line)] px-2 py-0.5 rounded-full hover:opacity-80 transition-opacity',
-        on: { click: () => sendFriendRequest(authorUid) }
-      }, '+ 친구추가') : h('span', { class: 'text-[10px] text-[var(--muted)] px-1' }, '친구')
-    );
-  }
-
-  async function sendFriendRequest(targetUid) {
-    const myUid = getCurrentUserUid();
-    if (!myUid) {
-      openAuthModal('login');
-      return;
-    }
-    if (targetUid === myUid) {
-      say('자기 자신에게는 친구 신청할 수 없습니다.');
-      return;
-    }
-
-    const alreadyReq = state.friendRequests.some(r => 
-      (r.fromUid === myUid && r.toUid === targetUid) || (r.fromUid === targetUid && r.toUid === myUid)
-    );
-    if (alreadyReq) {
-      say('이미 친구 신청이 전송되었거나 대기 중입니다.');
-      return;
-    }
-
-    const reqData = {
-      id: 'freq_' + Date.now(),
-      fromUid: myUid,
-      toUid: targetUid,
-      status: 'pending',
-      createdAt: Date.now()
-    };
-
-    state.friendRequests.push(reqData);
-    syncStateToLocalStorage();
-    say('친구 신청을 보냈습니다.');
-    renderFriendsAndChatHub();
-  }
-
-  async function acceptFriendRequest(reqId, fromUid) {
-    const myUid = getCurrentUserUid();
-    if (!myUid) return;
-
-    const friendData = {
-      id: 'fr_' + Date.now(),
-      user1: myUid,
-      user2: fromUid,
-      createdAt: Date.now()
-    };
-
-    state.friends.push(friendData);
-    state.friendRequests = state.friendRequests.filter(r => r.id !== reqId);
-    syncStateToLocalStorage();
-    say('친구 신청을 승인했습니다!');
-    renderFriendsAndChatHub();
-  }
-
-  async function rejectFriendRequest(reqId) {
-    state.friendRequests = state.friendRequests.filter(r => r.id !== reqId);
-    syncStateToLocalStorage();
-    say('친구 신청을 거절했습니다.');
-    renderFriendsAndChatHub();
-  }
-
-  function startDirectChat(partnerUid) {
-    state.activeChatPartnerId = partnerUid;
-    const modal = $('friends-chat-modal');
-    if (modal) modal.classList.remove('hidden');
-    renderFriendsAndChatHub();
-  }
-
-  function renderFriendsAndChatHub() {
-    const myUid = getCurrentUserUid();
-    if (!myUid) return;
-
-    const incomingReqs = state.friendRequests.filter(r => r.toUid === myUid && r.status === 'pending');
-    
-    const reqBadge = $('req-count-badge');
-    const sideReqBadge = $('side-req-badge');
-    const leftReqBadge = $('left-req-count-badge');
-    
-    if (reqBadge) {
-      reqBadge.textContent = incomingReqs.length;
-      reqBadge.classList.toggle('hidden', incomingReqs.length === 0);
-    }
-    if (sideReqBadge) {
-      sideReqBadge.textContent = incomingReqs.length;
-      sideReqBadge.classList.toggle('hidden', incomingReqs.length === 0);
-    }
-    if (leftReqBadge) {
-      leftReqBadge.textContent = incomingReqs.length;
-      leftReqBadge.classList.toggle('hidden', incomingReqs.length === 0);
-    }
-
-    renderLeftSidebarChatList(incomingReqs);
-
-    const sidebarList = $('chat-sidebar-list');
-    if (!sidebarList) return;
-
-    if (state.chatHubTab === 'friends') {
-      const myFriends = state.friends.filter(f => f.user1 === myUid || f.user2 === myUid);
-      const friendUids = myFriends.map(f => f.user1 === myUid ? f.user2 : f.user1);
-
-      let displayList = friendUids;
-      const query = state.friendSearchQuery.trim().toLowerCase();
-      if (query) {
-        displayList = friendUids.filter(fUid => getUserInfo(fUid).name.toLowerCase().includes(query));
+    try {
+      if (useOnlineFirebase && db) {
+        deleteDoc(getPublicDoc('comments', commentId)).catch(e => console.warn(e));
       }
-
-      if (displayList.length === 0) {
-        sidebarList.replaceChildren(
-          h('div', { class: 'p-4 text-center text-xs text-[var(--muted)]' },
-            query ? '검색 결과가 없습니다.' : '아직 추가된 친구가 없습니다. 게시글의 작성자 옆 [친구추가] 버튼을 눌러보세요!'
-          )
-        );
-      } else {
-        sidebarList.replaceChildren(
-          ...displayList.map(fUid => {
-            const fInfo = getUserInfo(fUid);
-            const isActive = state.activeChatPartnerId === fUid;
-            return h('div', {
-              class: `p-3 flex items-center gap-2.5 cursor-pointer hover:bg-[var(--surface-2)] transition-colors ${isActive ? 'bg-[var(--surface-2)] font-bold' : ''}`,
-              on: { click: () => { state.activeChatPartnerId = fUid; renderFriendsAndChatHub(); } }
-            },
-              h('img', { class: 'w-8 h-8 rounded-full object-cover shadow-sm', src: fInfo.avatarUrl }),
-              h('div', { class: 'min-w-0 flex-1' },
-                h('p', { class: 'text-xs truncate font-medium' }, fInfo.name),
-                h('p', { class: 'text-[10px] text-[var(--muted)] truncate' }, '클릭하여 대화하기')
-              )
-            );
-          })
-        );
-      }
-    } else if (state.chatHubTab === 'requests') {
-      if (incomingReqs.length === 0) {
-        sidebarList.replaceChildren(
-          h('div', { class: 'p-4 text-center text-xs text-[var(--muted)]' }, '받은 친구 신청이 없습니다.')
-        );
-      } else {
-        sidebarList.replaceChildren(
-          ...incomingReqs.map(req => {
-            const senderInfo = getUserInfo(req.fromUid);
-            return h('div', { class: 'p-3 flex flex-col gap-2' },
-              h('div', { class: 'flex items-center gap-2' },
-                h('img', { class: 'w-7 h-7 rounded-full object-cover', src: senderInfo.avatarUrl }),
-                h('span', { class: 'text-xs font-medium truncate' }, senderInfo.name)
-              ),
-              h('div', { class: 'flex gap-1.5 justify-end' },
-                h('button', {
-                  type: 'button',
-                  class: 'btn text-[11px] px-2.5 py-1',
-                  on: { click: () => acceptFriendRequest(req.id, req.fromUid) }
-                }, '승인'),
-                h('button', {
-                  type: 'button',
-                  class: 'btn-secondary text-[11px] px-2.5 py-1',
-                  on: { click: () => rejectFriendRequest(req.id) }
-                }, '거절')
-              )
-            );
-          })
-        );
-      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      state.comments = state.comments.filter(c => c.id !== commentId);
+      say('댓글이 삭제되었습니다.');
+      render();
     }
-
-    renderActiveChatWindow();
-  }
-
-  function renderLeftSidebarChatList(incomingReqs) {
-    const listEl = $('side-chat-list');
-    if (!listEl) return;
-
-    const myUid = getCurrentUserUid();
-    if (!myUid) return;
-
-    if (state.chatHubTab === 'friends') {
-      const myFriends = state.friends.filter(f => f.user1 === myUid || f.user2 === myUid);
-      const friendUids = myFriends.map(f => f.user1 === myUid ? f.user2 : f.user1);
-
-      let displayList = friendUids;
-      const query = state.friendSearchQuery.trim().toLowerCase();
-      if (query) {
-        displayList = friendUids.filter(fUid => getUserInfo(fUid).name.toLowerCase().includes(query));
-      }
-
-      if (displayList.length === 0) {
-        listEl.replaceChildren(
-          h('div', { class: 'p-3 text-center text-[11px] text-[var(--muted)]' }, '친구 목록이 비어있습니다.')
-        );
-      } else {
-        listEl.replaceChildren(
-          ...displayList.map(fUid => {
-            const fInfo = getUserInfo(fUid);
-            return h('div', {
-              class: 'p-2 flex items-center justify-between gap-2 hover:bg-[var(--surface-2)] cursor-pointer transition-colors',
-              on: { click: () => startDirectChat(fUid) }
-            },
-              h('div', { class: 'flex items-center gap-2 min-w-0' },
-                h('img', { class: 'w-6 h-6 rounded-full object-cover', src: fInfo.avatarUrl }),
-                h('span', { class: 'truncate font-medium text-xs' }, fInfo.name)
-              ),
-              h('span', { class: 'text-[10px] bg-[var(--surface-2)] border border-[var(--line)] text-[var(--accent)] px-1.5 py-0.5 rounded-full' }, '채팅')
-            );
-          })
-        );
-      }
-    } else {
-      if (incomingReqs.length === 0) {
-        listEl.replaceChildren(
-          h('div', { class: 'p-3 text-center text-[11px] text-[var(--muted)]' }, '신청이 없습니다.')
-        );
-      } else {
-        listEl.replaceChildren(
-          ...incomingReqs.map(req => {
-            const senderInfo = getUserInfo(req.fromUid);
-            return h('div', { class: 'p-2 flex items-center justify-between gap-1' },
-              h('div', { class: 'flex items-center gap-1.5 min-w-0' },
-                h('img', { class: 'w-5 h-5 rounded-full object-cover', src: senderInfo.avatarUrl }),
-                h('span', { class: 'truncate text-xs' }, senderInfo.name)
-              ),
-              h('div', { class: 'flex gap-1 flex-shrink-0' },
-                h('button', {
-                  type: 'button',
-                  class: 'btn text-[10px] px-1.5 py-0.5',
-                  on: { click: () => acceptFriendRequest(req.id, req.fromUid) }
-                }, '승인'),
-                h('button', {
-                  type: 'button',
-                  class: 'btn-secondary text-[10px] px-1.5 py-0.5',
-                  on: { click: () => rejectFriendRequest(req.id) }
-                }, '✕')
-              )
-            );
-          })
-        );
-      }
-    }
-  }
-
-  function renderActiveChatWindow() {
-    const partnerHeader = $('chat-partner-header');
-    const msgBox = $('chat-messages-box');
-    const sendForm = $('chat-send-form');
-    const myUid = getCurrentUserUid();
-
-    if (!partnerHeader || !msgBox || !sendForm) return;
-
-    if (!state.activeChatPartnerId) {
-      partnerHeader.replaceChildren(
-        h('span', { class: 'text-xs text-[var(--muted)]' }, '대화 상대를 선택해주세요')
-      );
-      msgBox.replaceChildren(
-        h('div', { class: 'text-center text-xs text-[var(--muted)] my-auto' }, '👈 왼쪽 목록에서 친구를 선택하여 채팅을 시작해보세요!')
-      );
-      sendForm.classList.add('hidden');
-      return;
-    }
-
-    const partnerInfo = getUserInfo(state.activeChatPartnerId);
-    partnerHeader.replaceChildren(
-      h('div', { class: 'flex items-center gap-2' },
-        h('img', { class: 'w-7 h-7 rounded-full object-cover shadow-sm', src: partnerInfo.avatarUrl }),
-        h('span', { class: 'font-bold text-sm' }, partnerInfo.name)
-      )
-    );
-
-    sendForm.classList.remove('hidden');
-
-    const chatMsgs = state.messages.filter(m => 
-      (m.senderId === myUid && m.receiverId === state.activeChatPartnerId) ||
-      (m.senderId === state.activeChatPartnerId && m.receiverId === myUid)
-    ).sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
-
-    if (chatMsgs.length === 0) {
-      msgBox.replaceChildren(
-        h('div', { class: 'text-center text-xs text-[var(--muted)] my-auto' }, `${partnerInfo.name}님과의 메시지 내역이 없습니다. 첫 인사를 건네보세요! 👋`)
-      );
-    } else {
-      msgBox.replaceChildren(
-        ...chatMsgs.map(msg => {
-          const isMine = msg.senderId === myUid;
-          return h('div', { class: `flex flex-col ${isMine ? 'items-end' : 'items-start'}` },
-            h('div', { class: `max-w-[75%] px-3.5 py-2 rounded-2xl text-xs ${isMine ? 'bg-[var(--accent)] text-white rounded-br-none' : 'bg-[var(--surface-2)] text-[var(--fg)] rounded-bl-none'}` },
-              msg.body
-            ),
-            h('span', { class: 'text-[9px] text-[var(--muted)] mt-1 px-1' }, ago(msg.createdAt))
-          );
-        })
-      );
-      msgBox.scrollTop = msgBox.scrollHeight;
-    }
-  }
-
-  async function sendChatMessage(e) {
-    e.preventDefault();
-    const input = $('chat-input-field');
-    const text = input ? input.value.trim() : '';
-    const myUid = getCurrentUserUid();
-    const partnerUid = state.activeChatPartnerId;
-
-    if (!text || !myUid || !partnerUid) return;
-
-    const msgData = {
-      id: 'msg_' + Date.now(),
-      senderId: myUid,
-      receiverId: partnerUid,
-      body: text,
-      createdAt: Date.now()
-    };
-
-    state.messages.push(msgData);
-    syncStateToLocalStorage();
-
-    input.value = '';
-    renderActiveChatWindow();
-  }
-
-  function initChatAndFriendsListeners() {
-    const floatBtn = $('floating-chat-btn');
-    const closeBtn = $('chat-hub-close');
-    const tabFriends = $('tab-friends-btn');
-    const tabReqs = $('tab-requests-btn');
-    const sideTabFriends = $('side-tab-friends');
-    const sideTabReqs = $('side-tab-requests');
-    const fSearchInput = $('friend-search-input');
-    const sideFSearchInput = $('side-friend-search');
-    const sendForm = $('chat-send-form');
-
-    if (floatBtn) {
-      floatBtn.addEventListener('click', () => {
-        const modal = $('friends-chat-modal');
-        if (modal) modal.classList.remove('hidden');
-        renderFriendsAndChatHub();
-      });
-    }
-
-    if (closeBtn) {
-      closeBtn.addEventListener('click', () => {
-        const modal = $('friends-chat-modal');
-        if (modal) modal.classList.add('hidden');
-      });
-    }
-
-    const setTab = (tab) => {
-      state.chatHubTab = tab;
-      const isFriends = tab === 'friends';
-      if (tabFriends) tabFriends.className = `flex-1 py-2.5 border-b-2 ${isFriends ? 'border-[var(--accent)] text-[var(--accent)]' : 'border-transparent text-[var(--muted)]'}`;
-      if (tabReqs) tabReqs.className = `flex-1 py-2.5 border-b-2 ${!isFriends ? 'border-[var(--accent)] text-[var(--accent)]' : 'border-transparent text-[var(--muted)]'} relative`;
-      
-      if (sideTabFriends) sideTabFriends.className = `flex-1 py-2 border-b-2 ${isFriends ? 'border-[var(--accent)] text-[var(--accent)]' : 'border-transparent text-[var(--muted)]'}`;
-      if (sideTabReqs) sideTabReqs.className = `flex-1 py-2 border-b-2 ${!isFriends ? 'border-[var(--accent)] text-[var(--accent)]' : 'border-transparent text-[var(--muted)]'} relative`;
-      
-      renderFriendsAndChatHub();
-    };
-
-    if (tabFriends) tabFriends.addEventListener('click', () => setTab('friends'));
-    if (tabReqs) tabReqs.addEventListener('click', () => setTab('requests'));
-    if (sideTabFriends) sideTabFriends.addEventListener('click', () => setTab('friends'));
-    if (sideTabReqs) sideTabReqs.addEventListener('click', () => setTab('requests'));
-
-    const onSearchInput = (e) => {
-      state.friendSearchQuery = e.target.value;
-      if (fSearchInput) fSearchInput.value = e.target.value;
-      if (sideFSearchInput) sideFSearchInput.value = e.target.value;
-      renderFriendsAndChatHub();
-    };
-
-    if (fSearchInput) fSearchInput.addEventListener('input', onSearchInput);
-    if (sideFSearchInput) sideFSearchInput.addEventListener('input', onSearchInput);
-
-    if (sendForm) sendForm.addEventListener('submit', sendChatMessage);
   }
 
   function renderFeed() {
     const container = $('feed');
     if (!container) return;
+
+    if (!state.postsLoaded) {
+      container.replaceChildren(skel(), skel(), skel());
+      return;
+    }
 
     let posts = [...state.posts];
     if (state.cat !== '전체') {
@@ -1321,12 +892,18 @@
 
   function postCard(p, deriveData) {
     const uid = getCurrentUserUid();
+    const currentAuthUid = auth && auth.currentUser ? auth.currentUser.uid : null;
     const isOpen = state.open[p.id] ?? false;
     const likesCount = deriveData.likeBy[p.id] || 0;
     const isLiked = !!deriveData.mine[p.id];
     const comments = deriveData.cBy[p.id] || [];
-    const authorInfo = getUserInfo(p.customAuthorId, p.authorName);
-    const isMine = uid && p.customAuthorId === uid;
+    
+    const effectiveAuthorId = p.customAuthorId || p.authorId;
+    const authorInfo = getUserInfo(effectiveAuthorId, p.authorName);
+    
+    const isMine = (uid && (p.customAuthorId === uid || p.authorId === uid)) || 
+                   (currentAuthUid && (p.authorId === currentAuthUid || p.userId === currentAuthUid)) ||
+                   (!p.customAuthorId && !p.authorId);
     const isArm = state.confirmDel === p.id;
 
     const postElem = h('article', { class: 'post' },
@@ -1335,7 +912,6 @@
           h('span', { class: 'chip' }, p.category),
           h('img', { class: 'w-5 h-5 rounded-full object-cover', src: authorInfo.avatarUrl, alt: authorInfo.name }),
           h('span', { class: 'text-xs text-[var(--muted)] font-medium' }, authorInfo.name),
-          renderUserActionMenu(p.customAuthorId, authorInfo.name),
           h('span', { class: 'text-xs text-[var(--muted)]' }, '•'),
           h('span', { class: 'text-xs text-[var(--muted)]' }, ago(p.createdAt))
         ),
@@ -1372,14 +948,14 @@
       const isLogged = !!state.customSessionUser;
       const cListElem = h('ul', { class: 'clist' },
         comments.map(c => {
-          const cAuthor = getUserInfo(c.customAuthorId, c.authorName);
-          const isCmtMine = uid && c.customAuthorId === uid;
+          const cAuthorId = c.customAuthorId || c.authorId;
+          const cAuthor = getUserInfo(cAuthorId, c.authorName);
+          const isCmtMine = (uid && (c.customAuthorId === uid || c.authorId === uid)) || (currentAuthUid && (c.authorId === currentAuthUid || c.userId === currentAuthUid));
           return h('li', { class: 'cmt' },
             h('img', { class: 'av object-cover', src: cAuthor.avatarUrl, alt: cAuthor.name }),
             h('div', { class: 'min-w-0' },
               h('div', { class: 'meta flex items-center gap-1.5 flex-wrap' },
                 h('b', null, cAuthor.name),
-                renderUserActionMenu(c.customAuthorId, cAuthor.name),
                 h('span', null, ago(c.createdAt))
               ),
               h('div', { class: 'text-sm mt-0.5 break-words' }, c.body)
@@ -1423,10 +999,11 @@
   function derive() {
     const likeBy = {}, cBy = {}, mine = {};
     const uid = getCurrentUserUid();
+    const activeAuthUid = auth && auth.currentUser ? auth.currentUser.uid : null;
 
     state.likes.forEach(l => {
       likeBy[l.postId] = (likeBy[l.postId] || 0) + 1;
-      if (uid && l.customUserId === uid) {
+      if ((uid && (l.userId === uid || l.customUserId === uid)) || (activeAuthUid && (l.userId === activeAuthUid || l.authorId === activeAuthUid))) {
         mine[l.postId] = true;
       }
     });
@@ -1444,7 +1021,6 @@
     renderBoards();
     renderFeed();
     syncComposer();
-    renderFriendsAndChatHub();
     const sNew = $('sort-new');
     const sHot = $('sort-hot');
     if (sNew) sNew.setAttribute('aria-pressed', String(state.sort === 'new'));
@@ -1520,6 +1096,42 @@
     });
   }
 
+  async function syncUserProfile(uid, name, avatarUrl) {
+    state.profileMap[uid] = { name, color: state.selectedColor, avatarUrl };
+    
+    if (state.customSessionUser && state.customSessionUser.uid === uid) {
+      state.customSessionUser.displayName = name;
+      state.customSessionUser.avatarUrl = avatarUrl;
+      state.customSessionUser.color = state.selectedColor;
+      setSavedSession(state.customSessionUser);
+
+      const customUsers = getCustomUsers();
+      const idx = customUsers.findIndex(u => u.uid === uid);
+      if (idx !== -1) {
+        customUsers[idx].displayName = name;
+        customUsers[idx].avatarUrl = avatarUrl;
+        customUsers[idx].color = state.selectedColor;
+        setLocalData(localUsersKey, customUsers);
+      }
+    }
+
+    if (useOnlineFirebase && db) {
+      try {
+        const activeUser = await ensureFirebaseAuth();
+        await setDoc(getPublicDoc('profiles', uid), {
+          name,
+          color: state.selectedColor,
+          avatarUrl,
+          authorId: activeUser ? activeUser.uid : 'anon',
+          userId: activeUser ? activeUser.uid : 'anon',
+          updatedAt: Date.now()
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }
+
   function initProfileForm() {
     const closeBtn = $('profile-modal-close');
     const cancelBtn = $('profile-cancel-btn');
@@ -1562,7 +1174,7 @@
     }
 
     if (form) {
-      form.addEventListener('submit', (e) => {
+      form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const newName = nameInput ? nameInput.value.trim() : '';
         const uid = getCurrentUserUid();
@@ -1571,20 +1183,20 @@
 
         const finalAvatar = state.customAvatarDataUrl || avatarFor(newName, state.selectedColor);
 
-        state.profileMap[uid] = { 
-          name: newName, 
-          color: state.selectedColor, 
-          avatarUrl: finalAvatar 
-        };
-
         if (state.customSessionUser) {
           state.customSessionUser.displayName = newName;
-          state.customSessionUser.avatarUrl = finalAvatar;
-          state.customSessionUser.color = state.selectedColor;
           setSavedSession(state.customSessionUser);
+
+          const customUsers = getCustomUsers();
+          const idx = customUsers.findIndex(u => u.uid === uid);
+          if (idx !== -1) {
+            customUsers[idx].displayName = newName;
+            setLocalData(localUsersKey, customUsers);
+          }
         }
 
-        syncStateToLocalStorage();
+        await syncUserProfile(uid, newName, finalAvatar);
+
         say('프로필 정보가 변경되었습니다.');
         closeProfileModal();
         render();
@@ -1592,10 +1204,65 @@
     }
   }
 
-  function initAuth() {
+  function setupRealtimeListeners() {
+    if (!useOnlineFirebase || !db) return;
+
+    try {
+      onSnapshot(getPublicColl('profiles'), snapshot => {
+        const map = {};
+        snapshot.forEach(d => { map[d.id] = d.data(); });
+        state.profileMap = map;
+        render();
+      }, err => console.warn(err));
+
+      onSnapshot(getPublicColl('posts'), snapshot => {
+        const list = [];
+        snapshot.forEach(d => { list.push({ id: d.id, ...d.data() }); });
+        state.posts = list;
+        state.postsLoaded = true;
+        render();
+      }, err => console.warn(err));
+
+      onSnapshot(getPublicColl('comments'), snapshot => {
+        const list = [];
+        snapshot.forEach(d => { list.push({ id: d.id, ...d.data() }); });
+        state.comments = list;
+        render();
+      }, err => console.warn(err));
+
+      onSnapshot(getPublicColl('likes'), snapshot => {
+        const list = [];
+        snapshot.forEach(d => { list.push({ id: d.id, ...d.data() }); });
+        state.likes = list;
+        render();
+      }, err => console.warn(err));
+    } catch (e) {
+      console.warn(e);
+    }
+  }
+
+  async function initAuth() {
+    if (state.customSessionUser) {
+      const u = state.customSessionUser;
+      state.profileMap[u.uid] = {
+        name: u.displayName,
+        color: u.color || '#B3362A',
+        avatarUrl: u.avatarUrl
+      };
+    }
+
+    if (useOnlineFirebase && auth) {
+      await ensureFirebaseAuth();
+      onAuthStateChanged(auth, async (user) => {
+        state.user = user;
+        render();
+      });
+      setupRealtimeListeners();
+    }
+
     const authForm = $('auth-form');
     if (authForm) {
-      authForm.addEventListener('submit', (e) => {
+      authForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = $('auth-email').value.trim();
         const password = $('auth-password').value;
@@ -1609,12 +1276,15 @@
             return;
           }
           const displayName = ($('auth-name').value.trim()) || email.split('@')[0];
-          const uid = 'usr_' + Date.now();
+          const uid = 'usr_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
           const newUser = { uid, email, password, displayName };
+          
           saveCustomUser(newUser);
           state.customSessionUser = newUser;
           setSavedSession(newUser);
-          say('회원가입 완료!');
+          
+          await syncUserProfile(uid, displayName, avatarFor(displayName));
+          say('회원가입이 완료되어 로그인되었습니다!');
           closeAuthModal();
           render();
         } else {
@@ -1625,6 +1295,7 @@
           }
           state.customSessionUser = found;
           setSavedSession(found);
+          await syncUserProfile(found.uid, found.displayName, avatarFor(found.displayName));
           say('로그인되었습니다.');
           closeAuthModal();
           render();
@@ -1639,7 +1310,6 @@
   }
 
   initProfileForm();
-  initChatAndFriendsListeners();
   initAuth();
 
   $('search')?.addEventListener('input', (e) => { state.q = e.target.value; render(); });
